@@ -887,5 +887,1117 @@ int getTypeHDataPacket(cmucam4_instance_t *cam, CMUcam4_histogram_data_1_t * poi
     return CMUCAM4_RETURN_SUCCESS;
 }
 
+int getTypeHDataPacket(cmucam4_instance_t *cam, CMUcam4_histogram_data_4_t * pointer)
+{
+    int errorValue; char * buffer = (cam->_resBuffer + sizeof('H')); size_t counter;
+
+    if(pointer == NULL)
+    {
+        return CMUCAM4_RETURN_FAILURE;
+    }
+
+    if((errorValue = _responceWrapper(cam, 'H')))
+    {
+        return errorValue;
+    }
+
+    for(counter = 0; counter < CMUCAM4_HD_4_T_LENGTH; counter++)
+    {
+        if((*buffer) == '\0')
+        {
+            return CMUCAM4_UNEXPECTED_RESPONCE;
+        }
+
+        pointer->bins[counter] = ((uint8_t) strtol(buffer, &buffer, 10));
+    }
+
+    if((*buffer) != '\0')
+    {
+        return CMUCAM4_UNEXPECTED_RESPONCE;
+    }
+
+    return CMUCAM4_RETURN_SUCCESS;
+}
+
+int getTypeHDataPacket(cmucam4_instance_t *cam, CMUcam4_histogram_data_8_t * pointer)
+{
+    int errorValue; char * buffer = (cam->_resBuffer + sizeof('H')); size_t counter;
+
+    if(pointer == NULL)
+    {
+        return CMUCAM4_RETURN_FAILURE;
+    }
+
+    if((errorValue = _responceWrapper(cam, 'H')))
+    {
+        return errorValue;
+    }
+
+    for(counter = 0; counter < CMUCAM4_HD_8_T_LENGTH; counter++)
+    {
+        if((*buffer) == '\0')
+        {
+            return CMUCAM4_UNEXPECTED_RESPONCE;
+        }
+
+        pointer->bins[counter] = ((uint8_t) strtol(buffer, &buffer, 10));
+    }
+
+    if((*buffer) != '\0')
+    {
+        return CMUCAM4_UNEXPECTED_RESPONCE;
+    }
+
+    return CMUCAM4_RETURN_SUCCESS;
+}
+
+int getTypeHDataPacket(cmucam4_instance_t *cam, CMUcam4_histogram_data_16_t * pointer)
+{
+    int errorValue; char * buffer = (cam->_resBuffer + sizeof('H')); size_t counter;
+
+    if(pointer == NULL)
+    {
+        return CMUCAM4_RETURN_FAILURE;
+    }
+
+    if((errorValue = _responceWrapper(cam, 'H')))
+    {
+        return errorValue;
+    }
+
+    for(counter = 0; counter < CMUCAM4_HD_16_T_LENGTH; counter++)
+    {
+        if((*buffer) == '\0')
+        {
+            return CMUCAM4_UNEXPECTED_RESPONCE;
+        }
+
+        pointer->bins[counter] = ((uint8_t) strtol(buffer, &buffer, 10));
+    }
+
+    if((*buffer) != '\0')
+    {
+        return CMUCAM4_UNEXPECTED_RESPONCE;
+    }
+
+    return CMUCAM4_RETURN_SUCCESS;
+}
+
+int getTypeHDataPacket(cmucam4_instance_t *cam, CMUcam4_histogram_data_32_t * pointer)
+{
+    int errorValue; char * buffer = (cam->_resBuffer + sizeof('H')); size_t counter;
+
+    if(pointer == NULL)
+    {
+        return CMUCAM4_RETURN_FAILURE;
+    }
+
+    if((errorValue = _responceWrapper(cam, 'H')))
+    {
+        return errorValue;
+    }
+
+    for(counter = 0; counter < CMUCAM4_HD_32_T_LENGTH; counter++)
+    {
+        if((*buffer) == '\0')
+        {
+            return CMUCAM4_UNEXPECTED_RESPONCE;
+        }
+
+        pointer->bins[counter] = ((uint8_t) strtol(buffer, &buffer, 10));
+    }
+
+    if((*buffer) != '\0')
+    {
+        return CMUCAM4_UNEXPECTED_RESPONCE;
+    }
+
+    return CMUCAM4_RETURN_SUCCESS;
+}
+
+int getTypeHDataPacket(cmucam4_instance_t *cam, CMUcam4_histogram_data_64_t * pointer)
+{
+    int errorValue; char * buffer = (cam->_resBuffer + sizeof('H')); size_t counter;
+
+    if(pointer == NULL)
+    {
+        return CMUCAM4_RETURN_FAILURE;
+    }
+
+    if((errorValue = _responceWrapper(cam, 'H')))
+    {
+        return errorValue;
+    }
+
+    for(counter = 0; counter < CMUCAM4_HD_64_T_LENGTH; counter++)
+    {
+        if((*buffer) == '\0')
+        {
+            return CMUCAM4_UNEXPECTED_RESPONCE;
+        }
+
+        pointer->bins[counter] = ((uint8_t) strtol(buffer, &buffer, 10));
+    }
+
+    if((*buffer) != '\0')
+    {
+        return CMUCAM4_UNEXPECTED_RESPONCE;
+    }
+
+    return CMUCAM4_RETURN_SUCCESS;
+}
+
+
+int getTypeSDataPacket(cmucam4_instance_t *cam, CMUcam4_statistics_data_t * pointer)
+{
+    int errorValue;
+
+    if(pointer == NULL)
+    {
+        return CMUCAM4_RETURN_FAILURE;
+    }
+
+    if((errorValue = _responceWrapper(cam, 'S')))
+    {
+        return errorValue;
+    }
+
+    return (sscanf(cam->_resBuffer,
+    "S %d %d %d %d %d %d %d %d %d %d %d %d ",
+    &(pointer->RMean),
+    &(pointer->GMean),
+    &(pointer->BMean),
+    &(pointer->RMedian),
+    &(pointer->GMedian),
+    &(pointer->BMedian),
+    &(pointer->RMode),
+    &(pointer->GMode),
+    &(pointer->BMode),
+    &(pointer->RStDev),
+    &(pointer->GStDev),
+    &(pointer->BStDev)) == 12)
+    ? CMUCAM4_RETURN_SUCCESS : CMUCAM4_UNEXPECTED_RESPONCE;
+}
+
+int getTypeTDataPacket(cmucam4_instance_t *cam, CMUcam4_tracking_data_t * pointer)
+{
+    int errorValue;
+
+    if(pointer == NULL)
+    {
+        return CMUCAM4_RETURN_FAILURE;
+    }
+
+    if((errorValue = _responceWrapper(cam, 'T')))
+    {
+        return errorValue;
+    }
+
+    return (sscanf(cam->_resBuffer,
+    "T %d %d %d %d %d %d %d %d ",
+    &(pointer->mx),
+    &(pointer->my),
+    &(pointer->x1),
+    &(pointer->y1),
+    &(pointer->x2),
+    &(pointer->y2),
+    &(pointer->pixels),
+    &(pointer->confidence)) == 8)
+    ? CMUCAM4_RETURN_SUCCESS : CMUCAM4_UNEXPECTED_RESPONCE;
+}
+
+int pollMode(cmucam4_instance_t *cam, int active)
+{
+    return (snprintf(cam->_cmdBuffer, CMUCAM4_CMD_BUFFER_SIZE,
+    "PM %d\r", active) < CMUCAM4_CMD_BUFFER_SIZE)
+    ? _voidCommandWrapper(cam, cam->_cmdBuffer, CMUCAM4_NON_FS_TIMEOUT)
+    : CMUCAM4_COMMAND_OVERFLOW;
+}
+
+int lineMode(cmucam4_instance_t *cam, int active)
+{
+    return (snprintf(_cam->cmdBuffer, CMUCAM4_CMD_BUFFER_SIZE,
+    "LM %d\r", active) < CMUCAM4_CMD_BUFFER_SIZE)
+    ? _voidCommandWrapper(cam, cam->_cmdBuffer, CMUCAM4_NON_FS_TIMEOUT)
+    : CMUCAM4_COMMAND_OVERFLOW;
+}
+
+int switchingMode(cmucam4_instance_t *cam, int active)
+{
+    return (snprintf(cam->_cmdBuffer, CMUCAM4_CMD_BUFFER_SIZE,
+    "SM %d\r", active) < CMUCAM4_CMD_BUFFER_SIZE)
+    ? _voidCommandWrapper(cam, cam->_cmdBuffer, CMUCAM4_NON_FS_TIMEOUT)
+    : CMUCAM4_COMMAND_OVERFLOW;
+}
+
+int testMode(cmucam4_instance_t *cam, int active)
+{
+    return (snprintf(cam->_cmdBuffer, CMUCAM4_CMD_BUFFER_SIZE,
+    "TM %d\r", active) < CMUCAM4_CMD_BUFFER_SIZE)
+    ? _voidCommandWrapper(cam, cam->_cmdBuffer, CMUCAM4_NON_FS_TIMEOUT)
+    : CMUCAM4_COMMAND_OVERFLOW;
+}
+
+int colorTracking(cmucam4_instance_t *cam, int active)
+{
+    return (snprintf(cam->_cmdBuffer, CMUCAM4_CMD_BUFFER_SIZE,
+    "CT %d\r", active) < CMUCAM4_CMD_BUFFER_SIZE)
+    ? _voidCommandWrapper(cam, cam->_cmdBuffer, CMUCAM4_NON_FS_TIMEOUT)
+    : CMUCAM4_COMMAND_OVERFLOW;
+}
+
+int histogramTracking(cmucam4_instance_t *cam, int active)
+{
+    return (snprintf(cam->_cmdBuffer, CMUCAM4_CMD_BUFFER_SIZE,
+    "HT %d\r", active) < CMUCAM4_CMD_BUFFER_SIZE)
+    ? _voidCommandWrapper(cam, cam->_cmdBuffer, CMUCAM4_NON_FS_TIMEOUT)
+    : CMUCAM4_COMMAND_OVERFLOW;
+}
+
+int invertedFilter(cmucam4_instance_t *cam, int active)
+{
+    return (snprintf(cam->_cmdBuffer, CMUCAM4_CMD_BUFFER_SIZE,
+    "IF %d\r", active) < CMUCAM4_CMD_BUFFER_SIZE)
+    ? _voidCommandWrapper(cam, cam->_cmdBuffer, CMUCAM4_NON_FS_TIMEOUT)
+    : CMUCAM4_COMMAND_OVERFLOW;
+}
+
+int noiseFilter(cmucam4_instance_t *cam, int threshold)
+{
+    return (snprintf(cam->_cmdBuffer, CMUCAM4_CMD_BUFFER_SIZE,
+    "NF %d\r", threshold) < CMUCAM4_CMD_BUFFER_SIZE)
+    ? _voidCommandWrapper(cam, cam->_cmdBuffer, CMUCAM4_NON_FS_TIMEOUT)
+    : CMUCAM4_COMMAND_OVERFLOW;
+}
+
+/*******************************************************************************
+* File System Commands
+*******************************************************************************/
+
+int changeAttributes(cmucam4_instance_t *cam, const char * fileOrDirectoryPathName,
+                              const char * attributes)
+{
+    if((fileOrDirectoryPathName == NULL) || (attributes == NULL))
+    {
+        return CMUCAM4_RETURN_FAILURE;
+    }
+
+    return (snprintf(cam->_cmdBuffer, CMUCAM4_CMD_BUFFER_SIZE,
+    "CA \"%s\" \"%s\"\r", fileOrDirectoryPathName, attributes)
+    < CMUCAM4_CMD_BUFFER_SIZE)
+    ? _voidCommandWrapper(cam, cam->_cmdBuffer, CMUCAM4_FS_TIMEOUT)
+    : CMUCAM4_COMMAND_OVERFLOW;
+}
+
+int changeDirectory(cmucam4_instance_t *cam, const char * directoryPathAndName)
+{
+    if(directoryPathAndName == NULL)
+    {
+        return CMUCAM4_RETURN_FAILURE;
+    }
+
+    return (snprintf(cam->_cmdBuffer, CMUCAM4_CMD_BUFFER_SIZE,
+    "CD \"%s\"\r", directoryPathAndName)
+    < CMUCAM4_CMD_BUFFER_SIZE)
+    ? _voidCommandWrapper(cam, cam->_cmdBuffer, CMUCAM4_FS_TIMEOUT)
+    : CMUCAM4_COMMAND_OVERFLOW;
+}
+
+int diskInformation(cmucam4_instance_t *cam, CMUcam4_disk_information_t * pointer)
+{
+    int errorValue; int resultValue;
+
+    if(pointer == NULL)
+    {
+        return CMUCAM4_RETURN_FAILURE;
+    }
+
+    if((errorValue = _commandWrapper(cam, "DI\r", CMUCAM4_FS_TIMEOUT)))
+    {
+        return errorValue;
+    }
+
+    if((errorValue = setjmp(cam->_env)))
+    {
+        return errorValue;
+    }
+
+    _receiveData(cam);
+    memset(pointer->volumeLabel, '\0', CMUCAM4_VL_LENGTH + 1);
+    memset(pointer->fileSystemType, '\0', CMUCAM4_FST_LENGTH + 1);
+
+    resultValue = (sscanf(cam->_resBuffer,
+    "\"%" CMUCAM4_VL_LENGTH_STR "c\" "
+    "\"%" CMUCAM4_FST_LENGTH_STR "c\" "
+    "%lxh %lxh %lu %lu %lu %lu ",
+    pointer->volumeLabel,
+    pointer->fileSystemType,
+    &(pointer->diskSignature),
+    &(pointer->volumeIdentification),
+    &(pointer->countOfDataSectors),
+    &(pointer->bytesPerSector),
+    &(pointer->sectorsPerCluster),
+    &(pointer->countOfClusters)) == 8);
+
+    _waitForIdle(cam);
+    return resultValue ? CMUCAM4_RETURN_SUCCESS : CMUCAM4_UNEXPECTED_RESPONCE;
+}
+
+int diskSpace(cmucam4_instance_t *cam, CMUcam4_disk_space_t * pointer)
+{
+    int errorValue; int resultValue;
+
+    if(pointer == NULL)
+    {
+        return CMUCAM4_RETURN_FAILURE;
+    }
+
+    if((errorValue = _commandWrapper(cam, "DS\r", CMUCAM4_FS_TIMEOUT)))
+    {
+        return errorValue;
+    }
+
+    if((errorValue = setjmp(cam->_env)))
+    {
+        return errorValue;
+    }
+
+    _receiveData(cam);
+
+    resultValue = (sscanf(cam->_resBuffer,
+    "%lu %lu ",
+    &(pointer->freeSectorCount),
+    &(pointer->usedSectorCount)) == 2);
+
+    _waitForIdle(cam);
+    return resultValue ? CMUCAM4_RETURN_SUCCESS : CMUCAM4_UNEXPECTED_RESPONCE;
+}
+
+int formatDisk(cmucam4_instance_t *cam)
+{
+    return _voidCommandWrapper(cam, "FM\r", CMUCAM4_FS_TIMEOUT);
+}
+
+long listDirectory(cmucam4_instance_t *cam, CMUcam4_directory_entry_t * pointer,
+                            size_t size, unsigned long offset)
+{
+    int errorValue; unsigned long directorySize;
+
+    if((errorValue = _commandWrapper(cam, "LS\r", CMUCAM4_FS_TIMEOUT)))
+    {
+        return errorValue;
+    }
+
+    if((errorValue = setjmp(cam->_env)))
+    {
+        return errorValue;
+    }
+
+    for(directorySize = 0; 1; directorySize++)
+    {
+        _receiveData(cam);
+
+        if((*cam->_resBuffer) == ':')
+        {
+            break;
+        }
+
+        if((pointer != NULL) && (offset <= directorySize) &&
+        ((directorySize - offset) < ((unsigned long) size)))
+        {
+            memset(pointer[directorySize - offset].name,
+            '\0', CMUCAM4_NAME_LENGTH + 1);
+            memset(pointer[directorySize - offset].attributes,
+            '\0', CMUCAM4_ATTR_LENGTH + 1);
+
+            if(sscanf(cam->_resBuffer,
+            " \"%" CMUCAM4_NAME_LENGTH_STR "c\" "
+            "%" CMUCAM4_ATTR_LENGTH_STR "c ",
+            pointer[directorySize - offset].name,
+            pointer[directorySize - offset].attributes) != 2)
+            {
+                return CMUCAM4_UNEXPECTED_RESPONCE;
+            }
+
+            pointer[directorySize - offset].size = 0;
+
+            if(strchr(pointer[directorySize - offset].attributes, 'D') == NULL)
+            {
+                if(sscanf(cam->_resBuffer,
+                " \"%*" CMUCAM4_NAME_LENGTH_STR "c\" "
+                "%*" CMUCAM4_ATTR_LENGTH_STR "c "
+                "%lu ",
+                &(pointer[directorySize - offset].size)) != 1)
+                {
+                    return CMUCAM4_UNEXPECTED_RESPONCE;
+                }
+            }
+        }
+    }
+
+    return (long) directorySize; // Will be between 0 and 65,536 entries.
+}
+
+int makeDirectory(cmucam4_instance_t *cam, const char * directoryPathAndName)
+{
+    if(directoryPathAndName == NULL)
+    {
+        return CMUCAM4_RETURN_FAILURE;
+    }
+
+    return (snprintf(cam->_cmdBuffer, CMUCAM4_CMD_BUFFER_SIZE,
+    "MK \"%s\"\r", directoryPathAndName)
+    < CMUCAM4_CMD_BUFFER_SIZE)
+    ? _voidCommandWrapper(cam, cam->_cmdBuffer, CMUCAM4_FS_TIMEOUT)
+    : CMUCAM4_COMMAND_OVERFLOW;
+}
+
+int moveEntry(cmucam4_instance_t *cam, const char * oldEntryPathAndName,
+                       const char * newEntryPathAndName)
+{
+    if((oldEntryPathAndName == NULL) || (newEntryPathAndName == NULL))
+    {
+        return CMUCAM4_RETURN_FAILURE;
+    }
+
+    return (snprintf(cam->_cmdBuffer, CMUCAM4_CMD_BUFFER_SIZE,
+    "MV \"%s\" \"%s\"\r", oldEntryPathAndName, newEntryPathAndName)
+    < CMUCAM4_CMD_BUFFER_SIZE)
+    ? _voidCommandWrapper(cam, cam->_cmdBuffer, CMUCAM4_FS_TIMEOUT)
+    : CMUCAM4_COMMAND_OVERFLOW;
+}
+
+int printLine(cmucam4_instance_t *cam, const char * filePathAndName, const char * textToAppend)
+{
+    if((filePathAndName == NULL) || (textToAppend == NULL))
+    {
+        return CMUCAM4_RETURN_FAILURE;
+    }
+
+    return (snprintf(cam->_cmdBuffer, CMUCAM4_CMD_BUFFER_SIZE,
+    "PL \"%s\" \"%s\"\r", filePathAndName, textToAppend)
+    < CMUCAM4_CMD_BUFFER_SIZE)
+    ? _voidCommandWrapper(cam, cam->_cmdBuffer, CMUCAM4_FS_TIMEOUT)
+    : CMUCAM4_COMMAND_OVERFLOW;
+}
+
+long filePrint(cmucam4_instance_t *cam, const char * filePathAndName, uint8_t * buffer,
+                        size_t size, unsigned long offset)
+{
+    int errorValue; unsigned long fileSize;
+
+    if(filePathAndName == NULL)
+    {
+        return CMUCAM4_RETURN_FAILURE;
+    }
+
+    if(snprintf(cam->_cmdBuffer, CMUCAM4_CMD_BUFFER_SIZE,
+    "PR \"%s\"\r", filePathAndName) >= CMUCAM4_CMD_BUFFER_SIZE)
+    {
+        return CMUCAM4_COMMAND_OVERFLOW;
+    }
+
+    if((errorValue = _commandWrapper(cam, cam->_cmdBuffer, CMUCAM4_FS_TIMEOUT)))
+    {
+        return errorValue;
+    }
+
+    if((errorValue = setjmp(cam->_env)))
+    {
+        return errorValue;
+    }
+
+    _receiveData(cam);
+
+    if(sscanf(cam->_resBuffer, "%lu ", &fileSize) != 1)
+    {
+        return CMUCAM4_UNEXPECTED_RESPONCE;
+    }
+
+    _readBinary(cam, buffer, size, fileSize, offset);
+
+    _waitForIdle(cam);
+    return (long) fileSize; // Will be between 0 and 2,147,483,647 bytes.
+}
+
+int removeEntry(cmucam4_instance_t *cam, const char * fileOrDirectoryPathAndName)
+{
+    if(fileOrDirectoryPathAndName == NULL)
+    {
+        return CMUCAM4_RETURN_FAILURE;
+    }
+
+    return (snprintf(cam->_cmdBuffer, CMUCAM4_CMD_BUFFER_SIZE,
+    "RM \"%s\"\r", fileOrDirectoryPathAndName)
+    < CMUCAM4_CMD_BUFFER_SIZE)
+    ? _voidCommandWrapper(cam, cam->_cmdBuffer, CMUCAM4_FS_TIMEOUT)
+    : CMUCAM4_COMMAND_OVERFLOW;
+}
+
+int unmountDisk(cmucam4_instance_t *cam)
+{
+    return _voidCommandWrapper(cam, "UM\r", CMUCAM4_FS_TIMEOUT);
+}
+
+/*******************************************************************************
+* Image Capture Commands
+*******************************************************************************/
+
+int dumpBitmap(cmucam4_instance_t *cam)
+{
+    return _voidCommandWrapper(cam, "DB\r", CMUCAM4_FS_TIMEOUT);
+}
+
+int dumpFrame(cmucam4_instance_t *cam, int horizontalResolution, int verticalResolution)
+{
+    return (snprintf(cam->_cmdBuffer, CMUCAM4_CMD_BUFFER_SIZE,
+    "DF %d %d\r", horizontalResolution, verticalResolution)
+    < CMUCAM4_CMD_BUFFER_SIZE)
+    ? _voidCommandWrapper(cam, cam->_cmdBuffer, CMUCAM4_FS_TIMEOUT)
+    : CMUCAM4_COMMAND_OVERFLOW;
+}
+
+int sendBitmap(cmucam4_instance_t *cam, CMUcam4_image_data_t * pointer)
+{
+    int errorValue;
+
+    if(pointer == NULL)
+    {
+        return CMUCAM4_RETURN_FAILURE;
+    }
+
+    if((errorValue = _commandWrapper(cam, "SB\r", CMUCAM4_NON_FS_TIMEOUT)))
+    {
+        return errorValue;
+    }
+
+    if((errorValue = setjmp(cam->_env)))
+    {
+        return errorValue;
+    }
+
+    _readBinary(cam, pointer->pixels, CMUCAM4_ID_T_LENGTH, CMUCAM4_ID_T_LENGTH, 0);
+
+    if(_readWithTimeout(cam) != '\r')
+    {
+        return CMUCAM4_UNEXPECTED_RESPONCE;
+    }
+
+    _waitForIdle(cam);
+    return CMUCAM4_RETURN_SUCCESS;
+}
+
+int sendFrame(cmucam4_instance_t *cam, int horizontalResolution, int verticalResolution,
+                       uint16_t * buffer,
+                       size_t horizonalSize, size_t horizontalOffset,
+                       size_t verticalSize, size_t verticalOffset)
+{
+    int errorValue; int serialBuffer0; int serialBuffer1;
+    size_t indexX; size_t indexY; size_t resolutionX; size_t resolutionY;
+
+    resolutionX = (CMUCAM4_FRAME_H_RES >> horizontalResolution);
+    resolutionY = (CMUCAM4_FRAME_V_RES >> verticalResolution);
+
+    if(snprintf(cam->_cmdBuffer, CMUCAM4_CMD_BUFFER_SIZE,
+    "SF %d %d\r", horizontalResolution, verticalResolution)
+    >= CMUCAM4_CMD_BUFFER_SIZE)
+    {
+        return CMUCAM4_COMMAND_OVERFLOW;
+    }
+
+    if((errorValue = _commandWrapper(cam, cam->_cmdBuffer, CMUCAM4_NON_FS_TIMEOUT)))
+    {
+        return errorValue;
+    }
+
+    if((errorValue = setjmp(cam->_env)))
+    {
+        return errorValue;
+    }
+
+    for(indexX = 0; indexX < resolutionX; indexX++)
+    {
+        _setReadTimeout(cam, CMUCAM4_NON_FS_TIMEOUT);
+
+        _receiveData(cam);
+
+        if((*(cam->_resBuffer)) == ':')
+        {
+            return CMUCAM4_UNEXPECTED_RESPONCE;
+        }
+
+        switch(cam->_version)
+        {
+            case VERSION_100:
+            case VERSION_101:
+
+                if(strcmp(cam->_resBuffer, "DAT:") != 0)
+                {
+                    return CMUCAM4_UNEXPECTED_RESPONCE;
+                }
+
+                break;
+
+            case VERSION_102:
+            case VERSION_103:
+
+                if(strcmp(cam->_resBuffer, "DAT: ") != 0)
+                {
+                    return CMUCAM4_UNEXPECTED_RESPONCE;
+                }
+
+                break;
+        }
+
+        for(indexY = 0; indexY < resolutionY; indexY++)
+        {
+            serialBuffer0 = (_readWithTimeout(cam) & 0xFF);
+            serialBuffer1 = (_readWithTimeout(cam) & 0xFF);
+
+            if((buffer != NULL) && (horizontalOffset <= indexX) &&
+            ((indexX - horizontalOffset) < horizonalSize) &&
+            (verticalOffset <= indexY) &&
+            ((indexY - verticalOffset) < verticalSize))
+            {
+                buffer[((indexY - verticalOffset) * horizonalSize)
+                + (indexX - horizontalOffset)]
+                = ((uint16_t) (serialBuffer0 | (serialBuffer1 << 8)));
+            }
+        }
+
+        if(_readWithTimeout(cam) != '\r')
+        {
+            return CMUCAM4_UNEXPECTED_RESPONCE;
+        }
+    }
+
+    _waitForIdle(cam);
+    return CMUCAM4_RETURN_SUCCESS;
+}
+
+/*******************************************************************************
+* Private Functions
+*******************************************************************************/
+
+int _voidCommandWrapper(cmucam4_instance_t *cam, const char * command, unsigned long timeout)
+{
+    int errorValue;
+
+    if((errorValue = _commandWrapper(cam, command, timeout)))
+    {
+        return errorValue;
+    }
+
+    if((errorValue = setjmp(cam->_env)))
+    {
+        return errorValue;
+    }
+
+    _waitForIdle(cam);
+    return CMUCAM4_RETURN_SUCCESS;
+}
+
+
+int _intCommandWrapper(cmucam4_instance_t *cam, const char * command, unsigned long timeout)
+{
+    int errorValue; int resultValue; int returnValue;
+
+    if((errorValue = _commandWrapper(cam, command, timeout)))
+    {
+        return errorValue;
+    }
+
+    if((errorValue = setjmp(cam->_env)))
+    {
+        return errorValue;
+    }
+
+    _receiveData(cam);
+    resultValue = (sscanf(cam->_resBuffer, "%d ", &returnValue) == 1);
+
+    _waitForIdle(cam);
+    return resultValue ? returnValue : CMUCAM4_UNEXPECTED_RESPONCE;
+}
+
+int _commandWrapper(cmucam4_instance_t *cam, const char * command, unsigned long timeout)
+{
+    int errorValue;
+
+    if((errorValue = idleCamera()))
+    {
+        return errorValue;
+    }
+
+    if((errorValue = setjmp(cam->_env)))
+    {
+        return errorValue;
+    }
+
+    _setReadTimeout(cam, timeout);
+    _com.write(cam, command);
+    _waitForResponce(cam);
+
+    return CMUCAM4_RETURN_SUCCESS;
+}
+
+int _responceWrapper(cmucam4_instance_t *cam, char responce)
+{
+    int errorValue;
+
+    if(cam->_state == DEACTIVATED)
+    {
+        return CMUCAM4_NOT_ACTIVATED;
+    }
+
+    if((errorValue = setjmp(cam->_env)))
+    {
+        return errorValue;
+    }
+
+    _setReadTimeout(cam, CMUCAM4_NON_FS_TIMEOUT);
+
+    for(;;)
+    {
+        _receiveData(cam);
+
+        if((*cam->_resBuffer) == responce)
+        {
+            break;
+        }
+
+        if((*cam->_resBuffer) == ':')
+        {
+            return CMUCAM4_STREAM_END;
+        }
+
+        if(strcmp(cam->_resBuffer, "F ") == 0)
+        {
+            _readBinary(cam, NULL, 0, CMUCAM4_ID_T_LENGTH, 0);
+
+            if(_readWithTimeout(cam) != '\r')
+            {
+                return CMUCAM4_UNEXPECTED_RESPONCE;
+            }
+        }
+    }
+
+    return CMUCAM4_RETURN_SUCCESS;
+}
+
+void _waitForIdle(cmucam4_instance_t *cam)
+{
+    for(;;)
+    {
+        _readText(cam);
+
+        if(_startsWithString(cam, "MSG"))
+        {
+            continue; // Throw the message away.
+        }
+
+        _handleError(cam);
+
+        if((*cam->_resBuffer) != ':')
+        {
+            longjmp(cam->_env, CMUCAM4_UNEXPECTED_RESPONCE);
+        }
+
+        break;
+    }
+}
+
+void _waitForResponce(cmucam4_instance_t *cam)
+{
+    _readText(cam);
+
+    if(strcmp(cam->_resBuffer, "NCK") == 0)
+    {
+        _readText(cam);
+
+        if((*cam->_resBuffer) == ':')
+        {
+            longjmp(cam->_env, CMUCAM4_NCK_RESPONCE);
+        }
+
+        longjmp(cam->_env, CMUCAM4_UNEXPECTED_RESPONCE);
+    }
+
+    if(strcmp(cam->_resBuffer, "ACK") != 0)
+    {
+        longjmp(_cam->env, CMUCAM4_UNEXPECTED_RESPONCE);
+    }
+}
+
+void _receiveData(cmucam4_instance_t *cam)
+{
+    for(;;)
+    {
+        _readText(cam);
+
+        if(_startsWithString(cam, "MSG"))
+        {
+            continue; // Throw the message away.
+        }
+
+        _handleError(cam);
+
+        break;
+    }
+}
+
+void _handleError(cmucam4_instance_t *cam)
+{
+    int errorValue; int sum; size_t index; size_t length;
+
+    if(_startsWithString(cam, "ERR"))
+    {
+        sum = 0; length = strlen(cam->_resBuffer);
+
+        for(index = 0; index < length; index++)
+        {
+            sum += cam->_resBuffer[index];
+        }
+
+        switch(sum)
+        {
+            case CMUCAM4_CAMERA_TIMEOUT_ERROR_SUM:
+                errorValue = CMUCAM4_CAMERA_TIMEOUT_ERROR; break;
+
+            case CMUCAM4_CAMERA_CONNECTION_ERROR_SUM:
+                errorValue = CMUCAM4_CAMERA_CONNECTION_ERROR; break;
+
+            case CMUCAM4_DISK_IO_ERROR_SUM:
+                errorValue = CMUCAM4_DISK_IO_ERROR; break;
+
+            case CMUCAM4_FILE_SYSTEM_CORRUPTED_SUM:
+                errorValue = CMUCAM4_FILE_SYSTEM_CORRUPTED; break;
+
+            case CMUCAM4_FILE_SYSTEM_UNSUPPORTED_SUM:
+                errorValue = CMUCAM4_FILE_SYSTEM_UNSUPPORTED; break;
+
+            case CMUCAM4_CARD_NOT_DETECTED_SUM:
+                errorValue = CMUCAM4_CARD_NOT_DETECTED; break;
+
+            case CMUCAM4_DISK_MAY_BE_FULL_SUM:
+                errorValue = CMUCAM4_DISK_MAY_BE_FULL; break;
+
+            case CMUCAM4_DIRECTORY_FULL_SUM:
+                errorValue = CMUCAM4_DIRECTORY_FULL; break;
+
+            case CMUCAM4_EXPECTED_AN_ENTRY_SUM:
+                errorValue = CMUCAM4_EXPECTED_AN_ENTRY; break;
+
+            case CMUCAM4_EXPECTED_A_DIRECTORY_SUM:
+                errorValue = CMUCAM4_EXPECTED_A_DIRECTORY; break;
+
+            case CMUCAM4_ENTRY_NOT_ACCESSIBLE_SUM:
+                errorValue = CMUCAM4_ENTRY_NOT_ACCESSIBLE; break;
+
+            case CMUCAM4_ENTRY_NOT_MODIFIABLE_SUM:
+                errorValue = CMUCAM4_ENTRY_NOT_MODIFIABLE; break;
+
+            case CMUCAM4_ENTRY_NOT_FOUND_SUM:
+                errorValue = CMUCAM4_ENTRY_NOT_FOUND; break;
+
+            // For v1.02 firmware and above.
+            case CMUCAM4_ENTRY_ALREADY_EXISTS_SUM:
+                errorValue = CMUCAM4_ENTRY_ALREADY_EXISTS; break;
+
+            // For v1.01 firmware and below.
+            case (CMUCAM4_ENTRY_ALREADY_EXISTS_SUM - 's'):
+                errorValue = CMUCAM4_ENTRY_ALREADY_EXISTS; break;
+
+            case CMUCAM4_DIRECTORY_LINK_MISSING_SUM:
+                errorValue = CMUCAM4_DIRECTORY_LINK_MISSING; break;
+
+            case CMUCAM4_DIRECTORY_NOT_EMPTY_SUM:
+                errorValue = CMUCAM4_DIRECTORY_NOT_EMPTY; break;
+
+            case CMUCAM4_NOT_A_DIRECTORY_SUM:
+                errorValue = CMUCAM4_NOT_A_DIRECTORY; break;
+
+            case CMUCAM4_NOT_A_FILE_SUM:
+                errorValue = CMUCAM4_NOT_A_FILE; break;
+
+            default:
+                errorValue = CMUCAM4_UNEXPECTED_RESPONCE; break;
+        }
+
+        _readText(cam);
+
+        if((*cam->_resBuffer) == ':')
+        {
+            longjmp(cam->_env, errorValue);
+        }
+
+        longjmp(cam->_env, CMUCAM4_UNEXPECTED_RESPONCE);
+    }
+}
+
+void _waitForString(cmucam4_instance_t *cam, const char * string)
+{
+    size_t index; size_t length = strlen(string);
+    memset(cam->_resBuffer, '\0', CMUCAM4_RES_BUFFER_SIZE);
+
+    do
+    {
+        for(index = 1; index < length; index++)
+        {
+            cam->_resBuffer[index - 1] = cam->_resBuffer[index];
+        }
+
+        cam->_resBuffer[length - 1] = cam->_readWithTimeout();
+    }
+    while(strcmp(cam->_resBuffer, string) != 0);
+}
+
+
+int _startsWithString(cmucam4_instance_t *cam, const char * string)
+{
+    return (strncmp(cam->_resBuffer, string, strlen(string)) == 0);
+}
+
+void _readBinary(cmucam4_instance_t *cam, uint8_t * buffer, size_t size,
+                          unsigned long packetSize,
+                          unsigned long packetOffset)
+{
+    int serialBuffer; unsigned long serialCounter;
+
+    for(serialCounter = 0; serialCounter < packetSize; serialCounter++)
+    {
+        serialBuffer = _readWithTimeout(cam);
+
+        if((buffer != NULL) && (packetOffset <= serialCounter) &&
+        ((serialCounter - packetOffset) < ((unsigned long) size)))
+        {
+            buffer[serialCounter - packetOffset] = ((uint8_t) serialBuffer);
+        }
+    }
+}
+
+void _readText(cmucam4_instance_t *cam)
+{
+    int serialBuffer; size_t serialCounter = 0;
+    memset(cam->_resBuffer, '\0', CMUCAM4_RES_BUFFER_SIZE);
+
+    for(;;)
+    {
+        serialBuffer = _readWithTimeout(cam);
+
+        if(serialBuffer == '\r')
+        {
+            break;
+        }
+
+        cam->_resBuffer[serialCounter++] = serialBuffer;
+
+        if(serialCounter >= CMUCAM4_RES_BUFFER_SIZE)
+        {
+            longjmp(cam->_env, CMUCAM4_RESPONCE_OVERFLOW);
+        }
+
+        switch(serialCounter)
+        {
+            case sizeof(':'):
+
+                if((*cam->_resBuffer) == ':')
+                {
+                    return; // Found the idle character.
+                }
+
+                break;
+
+            case (sizeof("F ") - 1):
+
+                if(strcmp(cam->_resBuffer, "F ") == 0)
+                {
+                    return; // Found type F packet.
+                }
+
+                break;
+
+            case (sizeof("DAT:") - 1):
+
+                if(cam->_state == ACTIVATED)
+                {
+                    switch(cam->_version)
+                    {
+                        case VERSION_100:
+                        case VERSION_101:
+
+                            if(strcmp(cam->_resBuffer, "DAT:") == 0)
+                            {
+                                return; // Found a old style DAT packet.
+                            }
+
+                            break;
+
+                        case VERSION_102:
+                        case VERSION_103:
+
+                            break;
+                    }
+                }
+
+                break;
+
+            case (sizeof("DAT: ") - 1):
+
+                if(cam->_state == ACTIVATED)
+                {
+                    switch(cam->_version)
+                    {
+                        case VERSION_100:
+                        case VERSION_101:
+
+                            break;
+
+                        case VERSION_102:
+                        case VERSION_103:
+
+                            if(strcmp(cam->_resBuffer, "DAT: ") == 0)
+                            {
+                                return; // Found a new style DAT packet.
+                            }
+
+                            break;
+                    }
+                }
+
+                break;
+
+            default: break;
+        }
+    }
+}
+
+void _setReadTimeout(cmucam4_instance_t *cam, unsigned long timeout)
+{
+    cam->_timeout = timeout;
+    cam->_milliseconds = cam->_com.milliseconds();
+}
+
+int _readWithTimeout(cmucam4_instance_t *cam)
+{
+    do
+    {
+        if((cam->_com.milliseconds() - cam->_milliseconds) >= cam->_timeout)
+        {
+            longjmp(cam->_env, CMUCAM4_SERIAL_TIMEOUT);
+        }
+    }
+    while(cam->_com.available() == 0);
+
+    return cam->_com.read();
+}
+
+
+
+
+
+
+
+
+
 
 

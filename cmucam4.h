@@ -1793,7 +1793,7 @@ int CMUCam4_getTypeHDataPacket(cmucam4_instance_t *cam, CMUcam4_histogram_data_1
 * @see CMUcam4::getHistogram()
 * @see CMUcam4::lineMode()
 *******************************************************************************/
-int CMUCam4_getTypeHDataPacket(CMUcam4_histogram_data_2_t * pointer);
+int CMUCam4_getTypeHDataPacket(cmucam4_instance_t *cam, CMUcam4_histogram_data_2_t * pointer);
 
 /***************************************************************************//**
 * Waits for a type H-4 data packet to appear in the data stream from the
@@ -1806,7 +1806,7 @@ int CMUCam4_getTypeHDataPacket(CMUcam4_histogram_data_2_t * pointer);
 * @see CMUcam4::getHistogram()
 * @see CMUcam4::lineMode()
 *******************************************************************************/
-int CMUCam4_getTypeHDataPacket(CMUcam4_histogram_data_4_t * pointer);
+int CMUCam4_getTypeHDataPacket(cmucam4_instance_t *cam, CMUcam4_histogram_data_4_t * pointer);
 
 /***************************************************************************//**
 * Waits for a type H-8 data packet to appear in the data stream from the
@@ -1819,7 +1819,7 @@ int CMUCam4_getTypeHDataPacket(CMUcam4_histogram_data_4_t * pointer);
 * @see CMUcam4::getHistogram()
 * @see CMUcam4::lineMode()
 *******************************************************************************/
-int CMUCam4_getTypeHDataPacket(CMUcam4_histogram_data_8_t * pointer);
+int CMUCam4_getTypeHDataPacket(cmucam4_instance_t *cam, CMUcam4_histogram_data_8_t * pointer);
 
 /***************************************************************************//**
 * Waits for a type H-16 data packet to appear in the data stream from the
@@ -1832,7 +1832,7 @@ int CMUCam4_getTypeHDataPacket(CMUcam4_histogram_data_8_t * pointer);
 * @see CMUcam4::getHistogram()
 * @see CMUcam4::lineMode()
 *******************************************************************************/
-int CMUCam4_getTypeHDataPacket(CMUcam4_histogram_data_16_t * pointer);
+int CMUCam4_getTypeHDataPacket(cmucam4_instance_t *cam, CMUcam4_histogram_data_16_t * pointer);
 
 /***************************************************************************//**
 * Waits for a type H-32 data packet to appear in the data stream from the
@@ -1845,7 +1845,7 @@ int CMUCam4_getTypeHDataPacket(CMUcam4_histogram_data_16_t * pointer);
 * @see CMUcam4::getHistogram()
 * @see CMUcam4::lineMode()
 *******************************************************************************/
-int CMUCam4_getTypeHDataPacket(CMUcam4_histogram_data_32_t * pointer);
+int CMUCam4_getTypeHDataPacket(cmucam4_instance_t *cam, CMUcam4_histogram_data_32_t * pointer);
 
 /***************************************************************************//**
 * Waits for a type H-64 data packet to appear in the data stream from the
@@ -1858,7 +1858,7 @@ int CMUCam4_getTypeHDataPacket(CMUcam4_histogram_data_32_t * pointer);
 * @see CMUcam4::getHistogram()
 * @see CMUcam4::lineMode()
 *******************************************************************************/
-int CMUCam4_getTypeHDataPacket(CMUcam4_histogram_data_64_t * pointer);
+int CMUCam4_getTypeHDataPacket(cmucam4_instance_t *cam, CMUcam4_histogram_data_64_t * pointer);
 
 /***************************************************************************//**
 * Waits for a type S data packet to appear in the data stream from the %CMUcam4
@@ -1872,7 +1872,7 @@ int CMUCam4_getTypeHDataPacket(CMUcam4_histogram_data_64_t * pointer);
 * @see CMUcam4::lineMode()
 * @see CMUcam4::switchingMode()
 *******************************************************************************/
-int CMUCam4_getTypeSDataPacket(CMUcam4_statistics_data_t * pointer);
+int CMUCam4_getTypeSDataPacket(cmucam4_instance_t *cam, CMUcam4_statistics_data_t * pointer);
 
 /***************************************************************************//**
 * Waits for a type T data packet to appear in the data stream from the %CMUcam4
@@ -1887,7 +1887,7 @@ int CMUCam4_getTypeSDataPacket(CMUcam4_statistics_data_t * pointer);
 * @see CMUcam4::lineMode()
 * @see CMUcam4::switchingMode()
 *******************************************************************************/
-int CMUCam4_getTypeTDataPacket(CMUcam4_tracking_data_t * pointer);
+int CMUCam4_getTypeTDataPacket(cmucam4_instance_t *cam, CMUcam4_tracking_data_t * pointer);
 
 /***************************************************************************//**
 * Turn poll mode off or on. Poll mode causes the %CMUcam4 to send one and only
@@ -1897,7 +1897,7 @@ int CMUCam4_getTypeTDataPacket(CMUcam4_tracking_data_t * pointer);
 * @param [in] active 0 for off and 1 for on.
 * @return 0 on success and a negative error value on failure.
 *******************************************************************************/
-int CMUCam4_pollMode(int active);
+int CMUCam4_pollMode(cmucam4_instance_t *cam, int active);
 
 /***************************************************************************//**
 * Turn line mode off or on. Line mode causes the %CMUcam4 to send type F data
@@ -1907,7 +1907,7 @@ int CMUCam4_pollMode(int active);
 * @see CMUcam4::getTypeFDataPacket()
 * @see CMUcam4_image_data_t
 *******************************************************************************/
-int CMUCam4_lineMode(int active);
+int CMUCam4_lineMode(cmucam4_instance_t *cam, int active);
 
 /***************************************************************************//**
 * Turn switching mode off or on. Switching mode causes the %CMUcam4 to send
@@ -1915,7 +1915,7 @@ int CMUCam4_lineMode(int active);
 * @param [in] active 0 for off and 1 for on.
 * @return 0 on success and a negative error value on failure.
 *******************************************************************************/
-int CMUCam4_switchingMode(int active);
+int CMUCam4_switchingMode(cmucam4_instance_t *cam, int active);
 
 /***************************************************************************//**
 * Turn test mode off or on. Test mode causes the %CMUcam4 to process an image
@@ -1923,7 +1923,7 @@ int CMUCam4_switchingMode(int active);
 * @param [in] active 0 for off and 1 for on.
 * @return 0 on success and a negative error value on failure.
 *******************************************************************************/
-int CMUCam4_testMode(int active);
+int CMUCam4_testMode(cmucam4_instance_t *cam, int active);
 
 /***************************************************************************//**
 * Turn color tracking off or on.
@@ -1934,7 +1934,7 @@ int CMUCam4_testMode(int active);
 * @param [in] active 0 for off and 1 for on.
 * @return 0 on success and a negative error value on failure.
 *******************************************************************************/
-int CMUCam4_colorTracking(int active);
+int CMUCam4_colorTracking(cmucam4_instance_t *cam, int active);
 
 /***************************************************************************//**
 * Turn histogram tracking off or on.
@@ -1945,7 +1945,7 @@ int CMUCam4_colorTracking(int active);
 * @param [in] active 0 for off and 1 for on.
 * @return 0 on success and a negative error value on failure.
 *******************************************************************************/
-int CMUCam4_histogramTracking(int active);
+int CMUCam4_histogramTracking(cmucam4_instance_t *cam, int active);
 
 /***************************************************************************//**
 * Turn the inverted filter off or on.
@@ -1956,7 +1956,7 @@ int CMUCam4_histogramTracking(int active);
 * @param [in] active 0 for off and 1 for on.
 * @return 0 on success and a negative error value on failure.
 *******************************************************************************/
-int CMUCam4_invertedFilter(int active);
+int CMUCam4_invertedFilter(cmucam4_instance_t *cam, int active);
 
 /***************************************************************************//**
 * Turn the noise filter off or on.
@@ -1969,7 +1969,7 @@ int CMUCam4_invertedFilter(int active);
 * @param [in] threshold 0 for off and 1 or more for on.
 * @return 0 on success and a negative error value on failure.
 *******************************************************************************/
-int CMUCam4_noiseFilter(int threshold);
+int CMUCam4_noiseFilter(cmucam4_instance_t *cam, int threshold);
 
 /***************************************************************************//**
 * Change a file's or directory's attributes on the disk.
@@ -1977,7 +1977,7 @@ int CMUCam4_noiseFilter(int threshold);
 * @param [in] attributes The new attribute string. E.g. "RHSA" or "_".
 * @return 0 on success and a negative error value on failure.
 *******************************************************************************/
-int CMUCam4_changeAttributes(const char * fileOrDirectoryPathName,
+int CMUCam4_changeAttributes(cmucam4_instance_t *cam, const char * fileOrDirectoryPathName,
                              const char * attributes);
 
 /***************************************************************************//**
@@ -1985,7 +1985,7 @@ int CMUCam4_changeAttributes(const char * fileOrDirectoryPathName,
 * @param [in] directoryPathAndName The directory to change to.
 * @return 0 on success and a negative error value on failure.
 *******************************************************************************/
-int CMUCam4_changeDirectory(const char * directoryPathAndName);
+int CMUCam4_changeDirectory(cmucam4_instance_t *cam, const char * directoryPathAndName);
 
 /***************************************************************************//**
 * Get information about the disk's geometry.
@@ -1993,7 +1993,7 @@ int CMUCam4_changeDirectory(const char * directoryPathAndName);
 * be filled with information about the disk's geometry.
 * @return 0 on success and a negative error value on failure.
 *******************************************************************************/
-int CMUCam4_diskInformation(CMUcam4_disk_information_t * pointer);
+int CMUCam4_diskInformation(cmucam4_instance_t *cam, CMUcam4_disk_information_t * pointer);
 
 /***************************************************************************//**
 * Get information about the disk's free and used sector space.
@@ -2001,13 +2001,13 @@ int CMUCam4_diskInformation(CMUcam4_disk_information_t * pointer);
 * filled with information about the disk's free and used sector space.
 * @return 0 on success and a negative error value on failure.
 *******************************************************************************/
-int CMUCam4_diskSpace(CMUcam4_disk_space_t * pointer);
+int CMUCam4_diskSpace(cmucam4_instance_t *cam, CMUcam4_disk_space_t * pointer);
 
 /***************************************************************************//**
 * Deletes all files and directories on the disk.
 * @return 0 on success and a negative error value on failure.
 *******************************************************************************/
-int CMUCam4_formatDisk();
+int CMUCam4_formatDisk(cmucam4_instance_t *cam);
 
 /***************************************************************************//**
 * Reads all or part of the entries in the working directory to a buffer.
@@ -2017,7 +2017,7 @@ int CMUCam4_formatDisk();
 * @return The absolute number of directory entries in the working directory on
 * success and a negative error value on failure.
 *******************************************************************************/
-long CMUCam4_listDirectory(CMUcam4_directory_entry_t * pointer,
+long CMUCam4_listDirectory(cmucam4_instance_t *cam, CMUcam4_directory_entry_t * pointer,
                            size_t size, unsigned long offset);
 
 /***************************************************************************//**
@@ -2025,7 +2025,7 @@ long CMUCam4_listDirectory(CMUcam4_directory_entry_t * pointer,
 * @param [in] directoryPathAndName The new directory to make.
 * @return 0 on success and a negative error value on failure.
 *******************************************************************************/
-int CMUCam4_makeDirectory(const char * directoryPathAndName);
+int CMUCam4_makeDirectory(cmucam4_instance_t *cam, const char * directoryPathAndName);
 
 /***************************************************************************//**
 * Moves a file or directory on the disk.
@@ -2033,7 +2033,7 @@ int CMUCam4_makeDirectory(const char * directoryPathAndName);
 * @param [in] newEntryPathAndName The destination of the entry to move.
 * @return 0 on success and a negative error value on failure.
 *******************************************************************************/
-int CMUCam4_moveEntry(const char * oldEntryPathAndName,
+int CMUCam4_moveEntry(cmucam4_instance_t *cam, const char * oldEntryPathAndName,
               const char * newEntryPathAndName);
 
 /***************************************************************************//**
@@ -2042,7 +2042,7 @@ int CMUCam4_moveEntry(const char * oldEntryPathAndName,
 * @param [in] textToAppend The string to append to the file.
 * @return 0 on success and a negative error value on failure.
 *******************************************************************************/
-int CMUCam4_printLine(const char * filePathAndName, const char * textToAppend);
+int CMUCam4_printLine(cmucam4_instance_t *cam, const char * filePathAndName, const char * textToAppend);
 
 /***************************************************************************//**
 * Reads all or part of a file to a buffer.
@@ -2053,7 +2053,7 @@ int CMUCam4_printLine(const char * filePathAndName, const char * textToAppend);
 * @return The absolute file size in bytes on success and a negative error value
 * on failure.
 *******************************************************************************/
-long CMUCam4_filePrint(const char * filePathAndName, uint8_t * buffer,
+long CMUCam4_filePrint(cmucam4_instance_t *cam, const char * filePathAndName, uint8_t * buffer,
                size_t size, unsigned long offset);
 
 /***************************************************************************//**
@@ -2061,7 +2061,7 @@ long CMUCam4_filePrint(const char * filePathAndName, uint8_t * buffer,
 * @param [in] fileOrDirectoryPathAndName The file or directory to delete.
 * @return 0 on success and a negative error value on failure.
 *******************************************************************************/
-int CMUCam4_removeEntry(const char * fileOrDirectoryPathAndName);
+int CMUCam4_removeEntry(cmucam4_instance_t *cam, const char * fileOrDirectoryPathAndName);
 
 /***************************************************************************//**
 * Unmounts the micro secure digital card. Other file system functions
@@ -2069,14 +2069,14 @@ int CMUCam4_removeEntry(const char * fileOrDirectoryPathAndName);
 * explictly unmount the disk before removal.
 * @return 0 on success and a negative error value on failure.
 *******************************************************************************/
-int CMUCam4_unmountDisk();
+int CMUCam4_unmountDisk(cmucam4_instance_t *cam);
 
 /***************************************************************************//**
 * Saves an 80x60 binary bitmap to the disk in BMP file format. The saved binary
 * bitmap is the 160x120 segmented color tracking image down-sampled to 80x60.
 * @return 0 on success and a negative error value on failure.
 *******************************************************************************/
-int CMUCam4_dumpBitmap();
+int CMUCam4_dumpBitmap(cmucam4_instance_t *cam);
 
 /***************************************************************************//**
 * Saves an 640:320:160:80x480:240:120:60 image to the disk in BMP file format.
@@ -2087,7 +2087,7 @@ int CMUCam4_dumpBitmap();
 * with: 0=480 pixels, 1=240 pixels, 2=160 pixels, 3=60 pixels.
 * @return 0 on success and a negative error value on failure.
 *******************************************************************************/
-int CMUCam4_dumpFrame(int horizontalResolution, int verticalResolution);
+int CMUCam4_dumpFrame(cmucam4_instance_t *cam, int horizontalResolution, int verticalResolution);
 
 /***************************************************************************//**
 * Receive an 80x60 binary bitmap from the %CMUcam4. The sent binary bitmap is
@@ -2095,7 +2095,7 @@ int CMUCam4_dumpFrame(int horizontalResolution, int verticalResolution);
 * @param [out] pointer The address of where to put the received binary bitmap.
 * @return 0 on success and a negative error value on failure.
 *******************************************************************************/
-int CMUCam4_sendBitmap(CMUcam4_image_data_t * pointer);
+int CMUCam4_sendBitmap(cmucam4_instance_t *cam, CMUcam4_image_data_t * pointer);
 
 /***************************************************************************//**
 * Receive an 640:320:160:80x480:240:120:60 image from the %CMUcam4. Use this
@@ -2115,7 +2115,7 @@ int CMUCam4_sendBitmap(CMUcam4_image_data_t * pointer);
 * verticalSize must be less than or equal the selected vertical resolution.
 * @return 0 on success and a negative error value on failure.
 *******************************************************************************/
-int CMUCam4_sendFrame(int horizontalResolution, int verticalResolution,
+int CMUCam4_sendFrame(cmucam4_instance_t *cam, int horizontalResolution, int verticalResolution,
               uint16_t * buffer,
               size_t horizonalSize, size_t horizontalOffset,
               size_t verticalSize, size_t verticalOffset);
@@ -2128,7 +2128,7 @@ private:
 * @param [in] timeout The timeout for the operation in milliseconds.
 * @return 0 on success and a negative error value on failure.
 *******************************************************************************/
-int _voidCommandWrapper(const char * command, unsigned long timeout);
+int _voidCommandWrapper(cmucam4_instance_t *cam, const char * command, unsigned long timeout);
 
 /***************************************************************************//**
 * Sends a command to the %CMUcam4 and receives an integer responce.
@@ -2136,7 +2136,7 @@ int _voidCommandWrapper(const char * command, unsigned long timeout);
 * @param [in] timeout The timeout for the operation in milliseconds.
 * @return The integer value on success and a negative error value on failure.
 *******************************************************************************/
-int _intCommandWrapper(const char * command, unsigned long timeout);
+int _intCommandWrapper(cmucam4_instance_t *cam, const char * command, unsigned long timeout);
 
 /***************************************************************************//**
 * Generic %CMUcam4 command wrapper. This function wakes the %CMUcam4 up from
@@ -2146,7 +2146,7 @@ int _intCommandWrapper(const char * command, unsigned long timeout);
 * @param [in] timeout The timeout for the operation in milliseconds.
 * @return 0 on success and a negative error value on failure.
 *******************************************************************************/
-int _commandWrapper(const char * command, unsigned long timeout);
+int _commandWrapper(cmucam4_instance_t *cam, const char * command, unsigned long timeout);
 
 /***************************************************************************//**
 * Handles receiving and parsing type F, H, S, and T data packets.
@@ -2154,41 +2154,41 @@ int _commandWrapper(const char * command, unsigned long timeout);
 *                      Either 'F', 'H', 'S', or 'T'.
 * @return 0 on success and a negative error value on failure.
 *******************************************************************************/
-int _responceWrapper(char responce);
+int _responceWrapper(cmucam4_instance_t *cam, char responce);
 
 /***************************************************************************//**
 * Waits for the %CMUcam4 to respond with the idle character.
 *******************************************************************************/
-void _waitForIdle();
+void _waitForIdle(cmucam4_instance_t *cam);
 
 /***************************************************************************//**
 * Waits for the %CMUcam4 to respond with "ACK" or "NCK".
 *******************************************************************************/
-void _waitForResponce();
+void _waitForResponce(cmucam4_instance_t *cam);
 
 /***************************************************************************//**
 * Receives data and handles "MSG" and "ERR" strings.
 *******************************************************************************/
-void _receiveData();
+void _receiveData(cmucam4_instance_t *cam);
 
 /***************************************************************************//**
 * Maps error strings to error numbers.
 *******************************************************************************/
-void _handleError();
+void _handleError(cmucam4_instance_t *cam);
 
 /***************************************************************************//**
 * Checks if the responce buffer starts with a particular string, repeatedly in
 * a loop, until timeout.
 * @param [in] string The string to check against the responce buffer.
 *******************************************************************************/
-void _waitForString(const char * string);
+void _waitForString(cmucam4_instance_t *cam, const char * string);
 
 /***************************************************************************//**
 * Checks if the responce buffer starts with a particular string.
 * @param [in] string The string to check against the responce buffer.
 * @return 1 if true and 0 if false.
 *******************************************************************************/
-int _startsWithString(const char * string);
+int _startsWithString(cmucam4_instance_t *cam, const char * string);
 
 /***************************************************************************//**
 * Reads binary data from the serial port.
@@ -2198,7 +2198,7 @@ int _startsWithString(const char * string);
 * @param [in] packetOffset Offset inside of the binary data packet to start
 * to read from in bytes.
 *******************************************************************************/
-void _readBinary(uint8_t * buffer, size_t size,
+void _readBinary(cmucam4_instance_t *cam, uint8_t * buffer, size_t size,
                  unsigned long packetSize,
                  unsigned long packetOffset);
 
@@ -2210,19 +2210,19 @@ void _readBinary(uint8_t * buffer, size_t size,
 * if "DAT:" is the first string encountered (for v1.01 and below firmware),
 * or if "DAT: " is the first string encountered (for v1.02 and above firmware).
 *******************************************************************************/
-void _readText();
+void _readText(cmucam4_instance_t *cam);
 
 /***************************************************************************//**
 * Sets the millisecond timeout.
 * @param [in] timeout The timeout in milliseconds.
 *******************************************************************************/
-void _setReadTimeout(unsigned long timeout);
+void _setReadTimeout(cmucam4_instance_t *cam, unsigned long timeout);
 
 /***************************************************************************//**
 * Reads a byte from the serial port with a timeout.
 * @return A byte from the serial port.
 *******************************************************************************/
-int _readWithTimeout();
+int _readWithTimeout(cmucam4_instance_t *cam);
 
 
 
