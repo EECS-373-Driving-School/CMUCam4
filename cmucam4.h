@@ -1082,8 +1082,59 @@ struct CMUcam4
 {
 	unit8_t *buffer;
 	mss_uart_instance_t* uart;
+	/***************************************************************************//**
+	* Millisecond timeout storage for use with CMUcam4::_readWithTimeout().
+	*******************************************************************************/
+	unsigned long _timeout;
+
+	/***************************************************************************//**
+	* Millisecond snapshot storage for use with CMUcam4::_readWithTimeout().
+	*******************************************************************************/
+	unsigned long _milliseconds;
+
+	/***************************************************************************//**
+	* Interface library activation state.
+	*******************************************************************************/
+	enum _CMUcam4_state
+	{
+		DEACTIVATED, ///< The interface library state is deactivated.
+		ACTIVATED ///< The interface library state is activated.
+	}
+	_state; ///< State booking variable.
+
+	/***************************************************************************//**
+	* Camera board firmware version.
+	*******************************************************************************/
+	enum _CMUcam4_version
+	{
+		VERSION_100 = CMUCAM4_FIRMWARE_V100, ///< %CMUcam4 firmware version 1.00.
+		VERSION_101 = CMUCAM4_FIRMWARE_V101, ///< %CMUcam4 firmware version 1.01.
+		VERSION_102 = CMUCAM4_FIRMWARE_V102, ///< %CMUcam4 firmware version 1.02.
+		VERSION_103 = CMUCAM4_FIRMWARE_V103 ///< %CMUcam4 firmware version 1.03.
+	}
+	_version; ///< Version booking variable.
+
+	/***************************************************************************//**
+	* Responce (input) storage buffer.
+	*******************************************************************************/
+	char _resBuffer[CMUCAM4_RES_BUFFER_SIZE];
+
+	/***************************************************************************//**
+	* Command (output) storage buffer.
+	*******************************************************************************/
+	char _cmdBuffer[CMUCAM4_CMD_BUFFER_SIZE];
+
+	/***************************************************************************//**
+	* Portable serial and timer wrapper library.
+	*******************************************************************************/
+	cmucom4_instance_t _com;
+
+	/***************************************************************************//**
+	* Stack environment storage for throwing and catching errors.
+	*******************************************************************************/
+	jmp_buf _env;
 };
-typedef CMUaom4 cmucam4_instance_t;
+typedef CMUcam4 cmucam4_instance_t;
 
 /***************************************************************************//**
 * Initialize the %CMUcam4 object to use the default Serial port.
@@ -1098,7 +1149,7 @@ CMUcam4_init ( cmucam4_instance_t *cam );
 * @see CMUCOM4_SERIAL2
 * @see CMUCOM4_SERIAL3
 *******************************************************************************/
-CMUcam4_init ( cmucam4_instance_t *cam, int port );
+CMUcam4_init ( cmucam4_instance_t *cam, mss_uart_instance_t* uart );
 
 /***************************************************************************//**
 * Gets a pixel (0 or 1) from a binary bitmap data structure.
@@ -1280,14 +1331,14 @@ int CMUCam4_isArchive(CMUcam4_directory_entry_t * pointer);
 * @return 0 on success and a negative error value on failure.
 * @see CMUcam4::end()
 *******************************************************************************/
-int CMUCam4_begin();
+int CMUCam4_begin(cmucam4_instance_t *cam);
 
 /***************************************************************************//**
 * Deactivates the interface library.
 * @return 0 on success and a negative error value on failure.
 * @see CMUcam4::begin()
 *******************************************************************************/
-int CMUCam4_end();
+int CMUCam4_end(cmucam4_instance_t *cam);
 
 /***************************************************************************//**
 * Gets the %CMUcam4's firmware version number.
@@ -2171,58 +2222,8 @@ void _setReadTimeout(unsigned long timeout);
 *******************************************************************************/
 int _readWithTimeout();
 
-/***************************************************************************//**
-* Millisecond timeout storage for use with CMUcam4::_readWithTimeout().
-*******************************************************************************/
-unsigned long _timeout;
 
-/***************************************************************************//**
-* Millisecond snapshot storage for use with CMUcam4::_readWithTimeout().
-*******************************************************************************/
-unsigned long _milliseconds;
 
-/***************************************************************************//**
-* Interface library activation state.
-*******************************************************************************/
-enum _CMUcam4_state
-{
-    DEACTIVATED, ///< The interface library state is deactivated.
-    ACTIVATED ///< The interface library state is activated.
-}
-_state; ///< State booking variable.
-
-/***************************************************************************//**
-* Camera board firmware version.
-*******************************************************************************/
-enum _CMUcam4_version
-{
-    VERSION_100 = CMUCAM4_FIRMWARE_V100, ///< %CMUcam4 firmware version 1.00.
-    VERSION_101 = CMUCAM4_FIRMWARE_V101, ///< %CMUcam4 firmware version 1.01.
-    VERSION_102 = CMUCAM4_FIRMWARE_V102, ///< %CMUcam4 firmware version 1.02.
-    VERSION_103 = CMUCAM4_FIRMWARE_V103 ///< %CMUcam4 firmware version 1.03.
-}
-_version; ///< Version booking variable.
-
-/***************************************************************************//**
-* Responce (input) storage buffer.
-*******************************************************************************/
-char _resBuffer[CMUCAM4_RES_BUFFER_SIZE];
-
-/***************************************************************************//**
-* Command (output) storage buffer.
-*******************************************************************************/
-char _cmdBuffer[CMUCAM4_CMD_BUFFER_SIZE];
-
-/***************************************************************************//**
-* Portable serial and timer wrapper library.
-*******************************************************************************/
-CMUcom4 _com;
-
-/***************************************************************************//**
-* Stack environment storage for throwing and catching errors.
-*******************************************************************************/
-jmp_buf _env;
-};
 
 #endif
 
