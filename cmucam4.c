@@ -354,10 +354,218 @@ int end(cmucam4_instance_t *cam)
     return CMUCAM4_RETURN_SUCCESS;
 }
 
+/*******************************************************************************
+* System Level Commands
+*******************************************************************************/
+
+int getVersion(cmucam4_instance_t *cam)
+{
+    return (cam->_state == ACTIVATED) ? _version : CMUCAM4_NOT_ACTIVATED;
+}
+
+int resetSystem(cmucam4_instance_t *cam)
+{
+    return (cam->_state == ACTIVATED) ? begin() : CMUCAM4_NOT_ACTIVATED;
+}
+
+int sleepDeeply(cmucam4_instance_t *cam)
+{
+    return _commandWrapper(cam, "SD\r", CMUCAM4_NON_FS_TIMEOUT);
+}
+
+int sleepLightly(cmucam4_instance_t *cam)
+{
+    return _commandWrapper(cam, "SL\r", CMUCAM4_NON_FS_TIMEOUT);
+}
+
+/*******************************************************************************
+* Camera Module Commands
+*******************************************************************************/
+
+int cameraBrightness(cmucam4_instance_t *cam, int brightness)
+{
+    return (snprintf(cam->_cmdBuffer, CMUCAM4_CMD_BUFFER_SIZE,
+    "CB %d\r", brightness) < CMUCAM4_CMD_BUFFER_SIZE)
+    ? _voidCommandWrapper(cam, cam->_cmdBuffer, CMUCAM4_NON_FS_TIMEOUT)
+    : CMUCAM4_COMMAND_OVERFLOW;
+}
+
+int cameraContrast(cmucam4_instance_t *cam, int contrast)
+{
+    return (snprintf(cam->_cmdBuffer, CMUCAM4_CMD_BUFFER_SIZE,
+    "CC %d\r", contrast) < CMUCAM4_CMD_BUFFER_SIZE)
+    ? _voidCommandWrapper(cam, cam->_cmdBuffer, CMUCAM4_NON_FS_TIMEOUT)
+    : CMUCAM4_COMMAND_OVERFLOW;
+}
+
+int cameraRegisterRead(cmucam4_instance_t *cam, int reg)
+{
+    return (snprintf(cam->_cmdBuffer, CMUCAM4_CMD_BUFFER_SIZE,
+    "CR %d\r", reg) < CMUCAM4_CMD_BUFFER_SIZE)
+    ? _intCommandWrapper(cam, cam->_cmdBuffer, CMUCAM4_NON_FS_TIMEOUT)
+    : CMUCAM4_COMMAND_OVERFLOW;
+}
+
+int cameraRegisterWrite(cmucam4_instance_t *cam, int reg, int value, int mask)
+{
+    return (snprintf(cam->_cmdBuffer, CMUCAM4_CMD_BUFFER_SIZE,
+    "CW %d %d %d\r", reg, value, mask) < CMUCAM4_CMD_BUFFER_SIZE)
+    ? _voidCommandWrapper(cam, cam->_cmdBuffer, CMUCAM4_NON_FS_TIMEOUT)
+    : CMUCAM4_COMMAND_OVERFLOW;
+}
+
+/*******************************************************************************
+* Camera Sensor Auto Control Commands
+*******************************************************************************/
+
+int autoGainControl(cmucam4_instance_t *cam, int active)
+{
+    return (snprintf(cam->_cmdBuffer, CMUCAM4_CMD_BUFFER_SIZE,
+    "AG %d\r", active) < CMUCAM4_CMD_BUFFER_SIZE)
+    ? _voidCommandWrapper(cam, cam->_cmdBuffer, CMUCAM4_NON_FS_TIMEOUT)
+    : CMUCAM4_COMMAND_OVERFLOW;
+}
+
+int autoWhiteBalance(cmucam4_instance_t *cam, int active)
+{
+    return (snprintf(cam->_cmdBuffer, CMUCAM4_CMD_BUFFER_SIZE,
+    "AW %d\r", active) < CMUCAM4_CMD_BUFFER_SIZE)
+    ? _voidCommandWrapper(cam, cam->_cmdBuffer, CMUCAM4_NON_FS_TIMEOUT)
+    : CMUCAM4_COMMAND_OVERFLOW;
+}
+
+/*******************************************************************************
+* Camera Format Commands
+*******************************************************************************/
+
+int horizontalMirror(cmucam4_instance_t *cam, int active)
+{
+    return (snprintf(cam->_cmdBuffer, CMUCAM4_CMD_BUFFER_SIZE,
+    "HM %d\r", active) < CMUCAM4_CMD_BUFFER_SIZE)
+    ? _voidCommandWrapper(cam, cam->_cmdBuffer, CMUCAM4_NON_FS_TIMEOUT)
+    : CMUCAM4_COMMAND_OVERFLOW;
+}
+
+int verticalFlip(cmucam4_instance_t *cam, int active)
+{
+    return (snprintf(cam->_cmdBuffer, CMUCAM4_CMD_BUFFER_SIZE,
+    "VF %d\r", active) < CMUCAM4_CMD_BUFFER_SIZE)
+    ? _voidCommandWrapper(cam, cam->_cmdBuffer, CMUCAM4_NON_FS_TIMEOUT)
+    : CMUCAM4_COMMAND_OVERFLOW;
+}
 
 
+/*******************************************************************************
+* Camera Effect Commands
+*******************************************************************************/
 
+int blackAndWhiteMode(cmucam4_instance_t *cam, int active)
+{
+    return (snprintf(cam->_cmdBuffer, CMUCAM4_CMD_BUFFER_SIZE,
+    "BW %d\r", active) < CMUCAM4_CMD_BUFFER_SIZE)
+    ? _voidCommandWrapper(cam, cam->_cmdBuffer, CMUCAM4_NON_FS_TIMEOUT)
+    : CMUCAM4_COMMAND_OVERFLOW;
+}
 
+int negativeMode(cmucam4_instance_t *cam, int active)
+{
+    return (snprintf(cam->_cmdBuffer, CMUCAM4_CMD_BUFFER_SIZE,
+    "NG %d\r", active) < CMUCAM4_CMD_BUFFER_SIZE)
+    ? _voidCommandWrapper(cam, cam->_cmdBuffer, CMUCAM4_NON_FS_TIMEOUT)
+    : CMUCAM4_COMMAND_OVERFLOW;
+}
+
+/*******************************************************************************
+* Auxiliary I/O Commands
+*******************************************************************************/
+
+int getButtonState(cmucam4_instance_t *cam)
+{
+    return _intCommandWrapper(cam, "GB\r", CMUCAM4_NON_FS_TIMEOUT);
+}
+
+long getButtonDuration(cmucam4_instance_t *cam)
+{
+    int errorValue; int resultValue; long returnValue;
+
+    if((errorValue = _commandWrapper(cam, "GD\r", CMUCAM4_NON_FS_TIMEOUT)))
+    {
+        return errorValue;
+    }
+
+    if((errorValue = setjmp(cam->_env)))
+    {
+        return errorValue;
+    }
+
+    _receiveData(cam);
+    resultValue = (sscanf(cam->_resBuffer, "%ld ", &returnValue) == 1);
+
+    _waitForIdle(cam);
+    return resultValue ? returnValue : CMUCAM4_UNEXPECTED_RESPONCE;
+}
+
+int getButtonPressed(cmucam4_instance_t *cam)
+{
+    return _intCommandWrapper(cam, "GP\r", CMUCAM4_NON_FS_TIMEOUT);
+}
+
+int getButtonReleased(cmucam4_instance_t *cam)
+{
+    return _intCommandWrapper(cam, "GR\r", CMUCAM4_NON_FS_TIMEOUT);
+}
+
+int panInput(cmucam4_instance_t *cam)
+{
+    return _intCommandWrapper(cam, "PI\r", CMUCAM4_NON_FS_TIMEOUT);
+}
+
+int panOutput(cmucam4_instance_t *cam, int direction, int output)
+{
+    return (snprintf(cam->_cmdBuffer, CMUCAM4_CMD_BUFFER_SIZE,
+    "PO %d %d\r", direction, output) < CMUCAM4_CMD_BUFFER_SIZE)
+    ? _voidCommandWrapper(cam, cam->_cmdBuffer, CMUCAM4_NON_FS_TIMEOUT)
+    : CMUCAM4_COMMAND_OVERFLOW;
+}
+
+int tiltInput(cmucam4_instance_t *cam)
+{
+    return _intCommandWrapper(cam, "TI\r", CMUCAM4_NON_FS_TIMEOUT);
+}
+
+int tiltOutput(cmucam4_instance_t *cam, int direction, int output)
+{
+    return (snprintf(cam->_cmdBuffer, CMUCAM4_CMD_BUFFER_SIZE,
+    "TO %d %d\r", direction, output) < CMUCAM4_CMD_BUFFER_SIZE)
+    ? _voidCommandWrapper(cam, cam->_cmdBuffer, CMUCAM4_NON_FS_TIMEOUT)
+    : CMUCAM4_COMMAND_OVERFLOW;
+}
+
+int getInputs(cmucam4_instance_t *cam)
+{
+    return _intCommandWrapper(cam, "GI\r", CMUCAM4_NON_FS_TIMEOUT);
+}
+
+int setOutputs(cmucam4_instance_t *cam, int directions, int outputs)
+{
+    return (snprintf(cam->_cmdBuffer, CMUCAM4_CMD_BUFFER_SIZE,
+    "SO %d %d\r", directions, outputs) < CMUCAM4_CMD_BUFFER_SIZE)
+    ? _voidCommandWrapper(cam, cam->_cmdBuffer, CMUCAM4_NON_FS_TIMEOUT)
+    : CMUCAM4_COMMAND_OVERFLOW;
+}
+
+int LEDOff(cmucam4_instance_t *cam)
+{
+    return _voidCommandWrapper(cam, "L0\r", CMUCAM4_NON_FS_TIMEOUT);
+}
+
+int LEDOn(cmucam4_instance_t *cam, long frequency)
+{
+    return (snprintf(cam->_cmdBuffer, CMUCAM4_CMD_BUFFER_SIZE,
+    "L1 %ld\r", frequency) < CMUCAM4_CMD_BUFFER_SIZE)
+    ? _voidCommandWrapper(cam, cam->_cmdBuffer, CMUCAM4_NON_FS_TIMEOUT)
+    : CMUCAM4_COMMAND_OVERFLOW;
+}
 
 
 

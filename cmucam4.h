@@ -1348,46 +1348,46 @@ int CMUCam4_end(cmucam4_instance_t *cam);
 * @see CMUCAM4_FIRMWARE_V102
 * @see CMUCAM4_FIRMWARE_V103
 *******************************************************************************/
-int CMUCam4_getVersion();
+int CMUCam4_getVersion(cmucam4_instance_t *cam);
 
 /***************************************************************************//**
 * Resets the %CMUcam4 device.
 * @return 0 on success and a negative error value on failure.
 *******************************************************************************/
-int CMUCam4_resetSystem();
+int CMUCam4_resetSystem(cmucam4_instance_t *cam);
 
 /***************************************************************************//**
 * Causes the %CMUcam4 to sleep deeply. This disables servo outputs.
 * @return 0 on success and a negative error value on failure.
 *******************************************************************************/
-int CMUCam4_sleepDeeply();
+int CMUCam4_sleepDeeply(cmucam4_instance_t *cam);
 
 /***************************************************************************//**
 * Causes the %CMUcam4 to sleep lightly. This does not disable servo outputs.
 * @return 0 on success and a negative error value on failure.
 *******************************************************************************/
-int CMUCam4_sleepLightly();
+int CMUCam4_sleepLightly(cmucam4_instance_t *cam);
 
 /***************************************************************************//**
 * Change the camera brightness setting - useful for low brightness situations.
 * @param [in] brightness Between -127 and 127. The default is 0.
 * @return 0 on success and a negative error value on failure.
 *******************************************************************************/
-int CMUCam4_cameraBrightness(int brightness);
+int CMUCam4_cameraBrightness(cmucam4_instance_t *cam, int brightness);
 
 /***************************************************************************//**
 * Change the camera contrast setting - useful for low contrast situations.
 * @param [in] contrast Between -31 and 31. The default is 0.
 * @return 0 on success and a negative error value on failure.
 *******************************************************************************/
-int CMUCam4_cameraContrast(int contrast);
+int CMUCam4_cameraContrast(cmucam4_instance_t *cam, int contrast);
 
 /***************************************************************************//**
 * Read a camera register value.
 * @param [in] reg The register address. Between 0 and 255.
 * @return The register value on success and a negative error value on failure.
 *******************************************************************************/
-int CMUCam4_cameraRegisterRead(int reg);
+int CMUCam4_cameraRegisterRead(cmucam4_instance_t *cam, int reg);
 
 /***************************************************************************//**
 * Write a camera register value.
@@ -1396,55 +1396,55 @@ int CMUCam4_cameraRegisterRead(int reg);
 * @param [in] mask The mask of bit positions to write to. Between 0 and 255.
 * @return 0 on success and a negative error value on failure.
 *******************************************************************************/
-int CMUCam4_cameraRegisterWrite(int reg, int value, int mask);
+int CMUCam4_cameraRegisterWrite(cmucam4_instance_t *cam, int reg, int value, int mask);
 
 /***************************************************************************//**
 * Turns the camera automatic gain control off or on.
 * @param [in] active 0 for off and 1 for on.
 * @return 0 on success and a negative error value on failure.
 *******************************************************************************/
-int CMUCam4_autoGainControl(int active);
+int CMUCam4_autoGainControl(cmucam4_instance_t *cam, int active);
 
 /***************************************************************************//**
 * Turns the camera automatic white balance off or on.
 * @param [in] active 0 for off and 1 for on.
 * @return 0 on success and a negative error value on failure.
 *******************************************************************************/
-int CMUCam4_autoWhiteBalance(int active);
+int CMUCam4_autoWhiteBalance(cmucam4_instance_t *cam, int active);
 
 /***************************************************************************//**
 * Horizontally mirror the camera module image.
 * @param [in] active 0 for normal mode and 1 for horizontally mirrored mode.
 * @return 0 on success and a negative error value on failure.
 *******************************************************************************/
-int CMUCam4_horizontalMirror(int active);
+int CMUCam4_horizontalMirror(cmucam4_instance_t *cam, int active);
 
 /***************************************************************************//**
 * Vertically flip the camera module image.
 * @param [in] active 0 for normal mode and 1 for vertically flipped mode.
 * @return 0 on success and a negative error value on failure.
 *******************************************************************************/
-int CMUCam4_verticalFlip(int active);
+int CMUCam4_verticalFlip(cmucam4_instance_t *cam, int active);
 
 /***************************************************************************//**
 * Cause the camera to output a black and white image.
 * @param [in] active 0 for normal mode and 1 for black and white mode.
 * @return 0 on success and a negative error value on failure.
 *******************************************************************************/
-int CMUCam4_blackAndWhiteMode(int active);
+int CMUCam4_blackAndWhiteMode(cmucam4_instance_t *cam, int active);
 
 /***************************************************************************//**
 * Cause the camera to output a negative image.
 * @param [in] active 0 for normal mode and 1 for negative mode.
 * @return 0 on success and a negative error value on failure.
 *******************************************************************************/
-int CMUCam4_negativeMode(int active);
+int CMUCam4_negativeMode(cmucam4_instance_t *cam, int active);
 
 /***************************************************************************//**
 * Returns the user button state on the %CMUcam4. 0 for released. 1 for pressed.
 * @return 0 or 1 on success and a negative error value on failure.
 *******************************************************************************/
-int CMUCam4_getButtonState();
+int CMUCam4_getButtonState(cmucam4_instance_t *cam);
 
 /***************************************************************************//**
 * Returns the user button duration in the current state on the %CMUcam4 in
@@ -1452,25 +1452,25 @@ int CMUCam4_getButtonState();
 * @return The button duration in state in milliseconds on success and a
 * negative error value on failure.
 *******************************************************************************/
-long CMUCam4_getButtonDuration();
+long CMUCam4_getButtonDuration(cmucam4_instance_t *cam);
 
 /***************************************************************************//**
 * Returns if the user button was pressed. 0 for no and 1 for yes.
 * @return 0 or 1 on success and a negative error value on failure.
 *******************************************************************************/
-int CMUCam4_getButtonPressed();
+int CMUCam4_getButtonPressed(cmucam4_instance_t *cam);
 
 /***************************************************************************//**
 * Returns if the user button was released. 0 for no and 1 for yes.
 * @return 0 or 1 on success and a negative error value on failure.
 *******************************************************************************/
-int CMUCam4_getButtonReleased();
+int CMUCam4_getButtonReleased(cmucam4_instance_t *cam);
 
 /***************************************************************************//**
 * Gets the digital state of the pan pin on the %CMUcam4.
 * @return 0 or 1 on success and a negative error value on failure.
 *******************************************************************************/
-int CMUCam4_panInput();
+int CMUCam4_panInput(cmucam4_instance_t *cam);
 
 /***************************************************************************//**
 * Sets the digital state of the pan pin on the %CMUcam4.
@@ -1478,13 +1478,13 @@ int CMUCam4_panInput();
 * @param [in] output The boolean output state. 0 for low. 1 for high.
 * @return 0 on success and a negative error value on failure.
 *******************************************************************************/
-int CMUCam4_panOutput(int direction, int output);
+int CMUCam4_panOutput(cmucam4_instance_t *cam, int direction, int output);
 
 /***************************************************************************//**
 * Gets the digital state of the tilt pin on the %CMUcam4.
 * @return 0 or 1 on success and a negative error value on failure.
 *******************************************************************************/
-int CMUCam4_tiltInput();
+int CMUCam4_tiltInput(cmucam4_instance_t *cam);
 
 /***************************************************************************//**
 * Sets the digital state of the tilt pin on the %CMUcam4.
@@ -1492,14 +1492,14 @@ int CMUCam4_tiltInput();
 * @param [in] output The boolean output state. 0 for low. 1 for high.
 * @return 0 on success and a negative error value on failure.
 *******************************************************************************/
-int CMUCam4_tiltOutput(int direction, int output);
+int CMUCam4_tiltOutput(cmucam4_instance_t *cam, int direction, int output);
 
 /***************************************************************************//**
 * Gets the digital states of the pan and tilt pins on the %CMUcam4.
 * The pan pin is bit 0. The tilt pin is bit 1.
 * @return 0, 1, 2, or 3 on success and a negative error value on failure.
 *******************************************************************************/
-int CMUCam4_getInputs();
+int CMUCam4_getInputs(cmucam4_instance_t *cam);
 
 /***************************************************************************//**
 * Sets the digital states of the pan and tilt pins on the %CMUcam4.
@@ -1510,13 +1510,13 @@ int CMUCam4_getInputs();
 *                     0 for low. 1 for high.
 * @return 0 on success and a negative error value on failure.
 *******************************************************************************/
-int CMUCam4_setOutputs(int directions, int outputs);
+int CMUCam4_setOutputs(cmucam4_instance_t *cam, int directions, int outputs);
 
 /***************************************************************************//**
 * Disables the auxiliary LED on the %CMUcam4.
 * @return 0 on success and a negative error value on failure.
 *******************************************************************************/
-int CMUCam4_LEDOff();
+int CMUCam4_LEDOff(cmucam4_instance_t *cam);
 
 /***************************************************************************//**
 * Enables the auxiliary LED on the %CMUcam4.
@@ -1524,7 +1524,7 @@ int CMUCam4_LEDOff();
                         Between 0 Hz and 10,000,000 Hz. -1 to turn off.
 * @return 0 on success and a negative error value on failure.
 *******************************************************************************/
-int CMUCam4_LEDOn(long frequency);
+int CMUCam4_LEDOn(cmucam4_instance_t *cam, long frequency);
 
 /***************************************************************************//**
 * Gets the pan or tilt servo pulse length in microseconds.
