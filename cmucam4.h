@@ -1532,7 +1532,7 @@ int CMUCam4_LEDOn(cmucam4_instance_t *cam, long frequency);
 * @param [in] servo The servo number. 0 for pan and 1 for tilt.
 * @return The pulse length on success and a negative error value on failure.
 *******************************************************************************/
-int CMUCam4_getServoPosition(int servo);
+int CMUCam4_getServoPosition(cmucam4_instance_t *cam, int servo);
 
 /***************************************************************************//**
 * Sets the pan or tilt servo pulse length in microseconds.
@@ -1542,7 +1542,7 @@ int CMUCam4_getServoPosition(int servo);
 * @param [in] pulseLength The servo pulse length in microseconds.
 * @return 0 on success and a negative error value on failure.
 *******************************************************************************/
-int CMUCam4_setServoPosition(int servo, int active, int pulseLength);
+int CMUCam4_setServoPosition(cmucam4_instance_t *cam, int servo, int active, int pulseLength);
 
 /***************************************************************************//**
 * Setup automatic pan control.
@@ -1550,7 +1550,7 @@ int CMUCam4_setServoPosition(int servo, int active, int pulseLength);
 * @param [in] reverse 0 for not reversed and 1 for reversed.
 * @return 0 on success and a negative error value on failure.
 *******************************************************************************/
-int CMUCam4_automaticPan(int active, int reverse);
+int CMUCam4_automaticPan(cmucam4_instance_t *cam, int active, int reverse);
 
 /***************************************************************************//**
 * Setup automatic tilt control.
@@ -1558,7 +1558,7 @@ int CMUCam4_automaticPan(int active, int reverse);
 * @param [in] reverse 0 for not reversed and 1 for reversed.
 * @return 0 on success and a negative error value on failure.
 *******************************************************************************/
-int CMUCam4_automaticTilt(int active, int reverse);
+int CMUCam4_automaticTilt(cmucam4_instance_t *cam, int active, int reverse);
 
 /***************************************************************************//**
 * Setup automatic pan control gain values.
@@ -1566,7 +1566,7 @@ int CMUCam4_automaticTilt(int active, int reverse);
 * @param [in] derivativeGain PD loop D gain. Between 0 (disable) and 1000.
 * @return 0 on success and a negative error value on failure.
 *******************************************************************************/
-int CMUCam4_autoPanParameters(int proportionalGain, int derivativeGain);
+int CMUCam4_autoPanParameters(cmucam4_instance_t *cam, int proportionalGain, int derivativeGain);
 
 /***************************************************************************//**
 * Setup automatic tilt control gain values.
@@ -1574,33 +1574,33 @@ int CMUCam4_autoPanParameters(int proportionalGain, int derivativeGain);
 * @param [in] derivativeGain PD loop D gain. Between 0 (disable) and 1000.
 * @return 0 on success and a negative error value on failure.
 *******************************************************************************/
-int CMUCam4_autoTiltParameters(int proportionalGain, int derivativeGain);
+int CMUCam4_autoTiltParameters(cmucam4_instance_t *cam, int proportionalGain, int derivativeGain);
 
 /***************************************************************************//**
 * Turn the television monitor signal off.
 * @return 0 on success and a negative error value on failure.
 *******************************************************************************/
-int CMUCam4_monitorOff();
+int CMUCam4_monitorOff(cmucam4_instance_t *cam);
 
 /***************************************************************************//**
 * Turn the television monitor signal on.
 * @return 0 on success and a negative error value on failure.
 *******************************************************************************/
-int CMUCam4_monitorOn();
+int CMUCam4_monitorOn(cmucam4_instance_t *cam);
 
 /***************************************************************************//**
 * Freeze the television monitor signal.
 * @param [in] active 0 to unfreeze and 1 to freeze.
 * @return 0 on success and a negative error value on failure.
 *******************************************************************************/
-int CMUCam4_monitorFreeze(int active);
+int CMUCam4_monitorFreeze(cmucam4_instance_t *cam, int active);
 
 /***************************************************************************//**
 * Change the television monitor signal.
 * @param [in] active 0 for NTSC and 1 for PAL.
 * @return 0 on success and a negative error value on failure.
 *******************************************************************************/
-int CMUCam4_monitorSignal(int active);
+int CMUCam4_monitorSignal(cmucam4_instance_t *cam, int active);
 
 /***************************************************************************//**
 * Populates a CMUcam4_tracking_parameters_t data structure with the current
@@ -1610,7 +1610,7 @@ int CMUCam4_monitorSignal(int active);
 * @return 0 on success and a negative error value on failure.
 * @see CMUcam4_tracking_parameters_t
 *******************************************************************************/
-int CMUCam4_getTrackingParameters(CMUcam4_tracking_parameters_t * pointer);
+int CMUCam4_getTrackingParameters(cmucam4_instance_t *cam, CMUcam4_tracking_parameters_t * pointer);
 
 /***************************************************************************//**
 * Populates a CMUcam4_tracking_window_t data structure with the current
@@ -1620,13 +1620,13 @@ int CMUCam4_getTrackingParameters(CMUcam4_tracking_parameters_t * pointer);
 * @return 0 on success and a negative error value on failure.
 * @see CMUcam4_tracking_window_t
 *******************************************************************************/
-int CMUCam4_getTrackingWindow(CMUcam4_tracking_window_t * pointer);
+int CMUCam4_getTrackingWindow(cmucam4_instance_t *cam, CMUcam4_tracking_window_t * pointer);
 
 /***************************************************************************//**
 * Reset the color tracking threshold parameters to track all possible colors.
 * @return 0 on success and a negative error value on failure.
 *******************************************************************************/
-int CMUCam4_setTrackingParameters();
+int CMUCam4_setTrackingParameters(cmucam4_instance_t *cam);
 
 /***************************************************************************//**
 * Set the color tracking threshold parameters to track a range of colors. A
@@ -1641,7 +1641,8 @@ int CMUCam4_setTrackingParameters();
 * @param [in] blueMax The maximum blue threshold - between 0 to 255.
 * @return 0 on success and a negative error value on failure.
 *******************************************************************************/
-int CMUCam4_setTrackingParameters(int redMin, int redMax,
+int CMUCam4_setTrackingParameters(cmucam4_instance_t *cam, 
+								  int redMin, int redMax,
                                   int greenMin, int greenMax,
                                   int blueMin, int blueMax);
 
@@ -1649,7 +1650,7 @@ int CMUCam4_setTrackingParameters(int redMin, int redMax,
 * Reset the color tracking window parameters to track all possible pixels.
 * @return 0 on success and a negative error value on failure.
 *******************************************************************************/
-int CMUCam4_setTrackingWindow();
+int CMUCam4_setTrackingWindow(cmucam4_instance_t *cam);
 
 /***************************************************************************//**
 * Set the color tracking window parameters to track a range of pixels. A
@@ -1662,7 +1663,7 @@ int CMUCam4_setTrackingWindow();
 * @param [in] bottomRightY Bottom right Y position (Y2) - between Y2 and 119.
 * @return 0 on success and a negative error value on failure.
 *******************************************************************************/
-int CMUCam4_setTrackingWindow(int topLeftX, int topLeftY,
+int CMUCam4_setTrackingWindow(cmucam4_instance_t *cam, int topLeftX, int topLeftY,
                       int bottomRightX, int bottomRightY);
 
 /***************************************************************************//**
@@ -1671,7 +1672,7 @@ int CMUCam4_setTrackingWindow(int topLeftX, int topLeftY,
 * getType_DataPackets functions is called.
 * @return 0 on success and a negative error value on failure.
 *******************************************************************************/
-int CMUCam4_idleCamera();
+int CMUCam4_idleCamera(cmucam4_instance_t *cam);
 
 /***************************************************************************//**
 * Causes the %CMUcam4 to enter stream mode and begin sending type T data
@@ -1682,7 +1683,7 @@ int CMUCam4_idleCamera();
 * @return 0 on success and a negative error value on failure.
 * @see CMUcam4::getTypeTDataPacket()
 *******************************************************************************/
-int CMUCam4_trackColor();
+int CMUCam4_trackColor(cmucam4_instance_t *cam);
 
 /***************************************************************************//**
 * Causes the %CMUcam4 to enter stream mode and begin sending type T data
@@ -1699,7 +1700,8 @@ int CMUCam4_trackColor();
 * @return 0 on success and a negative error value on failure.
 * @see CMUcam4::getTypeTDataPacket()
 *******************************************************************************/
-int CMUCam4_trackColor(int redMin, int redMax,
+int CMUCam4_trackColor(cmucam4_instance_t *cam, 
+					   int redMin, int redMax,
                        int greenMin, int greenMax,
                        int blueMin, int blueMax);
 
@@ -1721,7 +1723,7 @@ int CMUCam4_trackColor(int redMin, int redMax,
 * @return 0 on success and a negative error value on failure.
 * @see CMUcam4::getTypeTDataPacket()
 *******************************************************************************/
-int CMUCam4_trackWindow(int redRange, int greenRange, int blueRange);
+int CMUCam4_trackWindow(cmucam4_instance_t *cam, int redRange, int greenRange, int blueRange);
 
 /***************************************************************************//**
 * Causes the %CMUcam4 to enter stream mode and begin sending type H data
@@ -1743,7 +1745,7 @@ int CMUCam4_trackWindow(int redRange, int greenRange, int blueRange);
 * @see CMUcam4::getTypeHDataPacket(CMUcam4_histogram_data_32_t * pointer)
 * @see CMUcam4::getTypeHDataPacket(CMUcam4_histogram_data_64_t * pointer)
 *******************************************************************************/
-int CMUCam4_getHistogram(int channel, int bins);
+int CMUCam4_getHistogram(cmucam4_instance_t *cam, int channel, int bins);
 
 /***************************************************************************//**
 * Causes the %CMUcam4 to enter stream mode and begin sending type S data
@@ -1753,7 +1755,7 @@ int CMUCam4_getHistogram(int channel, int bins);
 * @return 0 on success and a negative error value on failure.
 * @see CMUcam4::getTypeSDataPacket()
 *******************************************************************************/
-int CMUCam4_getMean();
+int CMUCam4_getMean(cmucam4_instance_t *cam);
 
 /***************************************************************************//**
 * Waits for a type F data packet to appear in the data stream from the %CMUcam4
@@ -1765,7 +1767,7 @@ int CMUCam4_getMean();
 * @return 0 on success and a negative error value on failure.
 * @see CMUcam4::lineMode()
 *******************************************************************************/
-int CMUCam4_getTypeFDataPacket(CMUcam4_image_data_t * pointer);
+int CMUCam4_getTypeFDataPacket(cmucam4_instance_t *cam, CMUcam4_image_data_t * pointer);
 
 /***************************************************************************//**
 * Waits for a type H-1 data packet to appear in the data stream from the
@@ -1778,7 +1780,7 @@ int CMUCam4_getTypeFDataPacket(CMUcam4_image_data_t * pointer);
 * @see CMUcam4::getHistogram()
 * @see CMUcam4::lineMode()
 *******************************************************************************/
-int CMUCam4_getTypeHDataPacket(CMUcam4_histogram_data_1_t * pointer);
+int CMUCam4_getTypeHDataPacket(cmucam4_instance_t *cam, CMUcam4_histogram_data_1_t * pointer);
 
 /***************************************************************************//**
 * Waits for a type H-2 data packet to appear in the data stream from the

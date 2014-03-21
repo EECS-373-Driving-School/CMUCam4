@@ -1,4 +1,5 @@
 #include "CMUcam4.h"
+#include "drivers/mss_uart/mss_uart.h"
 
 cmucam4_instance_t cmucam4;
 
@@ -567,11 +568,324 @@ int LEDOn(cmucam4_instance_t *cam, long frequency)
     : CMUCAM4_COMMAND_OVERFLOW;
 }
 
+/*******************************************************************************
+* Servo Commands
+*******************************************************************************/
 
+int getServoPosition(cmucam4_instance_t *cam, int servo)
+{
+    return (snprintf(cam->_cmdBuffer, CMUCAM4_CMD_BUFFER_SIZE,
+    "GS %d\r", servo) < CMUCAM4_CMD_BUFFER_SIZE)
+    ? _intCommandWrapper(cam, cam->_cmdBuffer, CMUCAM4_NON_FS_TIMEOUT)
+    : CMUCAM4_COMMAND_OVERFLOW;
+}
 
+int setServoPosition(cmucam4_instance_t *cam, int servo, int active, int pulseLength)
+{
+    return (snprintf(cam->_cmdBuffer, CMUCAM4_CMD_BUFFER_SIZE,
+    "SS %d %d %d\r", servo, active, pulseLength) < CMUCAM4_CMD_BUFFER_SIZE)
+    ? _voidCommandWrapper(cam, cam->_cmdBuffer, CMUCAM4_NON_FS_TIMEOUT)
+    : CMUCAM4_COMMAND_OVERFLOW;
+}
 
+int automaticPan(cmucam4_instance_t *cam, int active, int reverse)
+{
+    return (snprintf(cam->_cmdBuffer, CMUCAM4_CMD_BUFFER_SIZE,
+    "AP %d %d\r", active, reverse) < CMUCAM4_CMD_BUFFER_SIZE)
+    ? _voidCommandWrapper(cam, cam->_cmdBuffer, CMUCAM4_NON_FS_TIMEOUT)
+    : CMUCAM4_COMMAND_OVERFLOW;
+}
 
+int automaticTilt(cmucam4_instance_t *cam, int active, int reverse)
+{
+    return (snprintf(cam->_cmdBuffer, CMUCAM4_CMD_BUFFER_SIZE,
+    "AT %d %d\r", active, reverse) < CMUCAM4_CMD_BUFFER_SIZE)
+    ? _voidCommandWrapper(cam, cam->_cmdBuffer, CMUCAM4_NON_FS_TIMEOUT)
+    : CMUCAM4_COMMAND_OVERFLOW;
+}
 
+int autoPanParameters(cmucam4_instance_t *cam, int proportionalGain, int derivativeGain)
+{
+    return (snprintf(cam->_cmdBuffer, CMUCAM4_CMD_BUFFER_SIZE,
+    "PP %d %d\r", proportionalGain, derivativeGain) < CMUCAM4_CMD_BUFFER_SIZE)
+    ? _voidCommandWrapper(cam, cam->_cmdBuffer, CMUCAM4_NON_FS_TIMEOUT)
+    : CMUCAM4_COMMAND_OVERFLOW;
+}
+
+int autoTiltParameters(cmucam4_instance_t *cam, int proportionalGain, int derivativeGain)
+{
+    return (snprintf(cam->_cmdBuffer, CMUCAM4_CMD_BUFFER_SIZE,
+    "TP %d %d\r", proportionalGain, derivativeGain) < CMUCAM4_CMD_BUFFER_SIZE)
+    ? _voidCommandWrapper(cam, cam->_cmdBuffer, CMUCAM4_NON_FS_TIMEOUT)
+    : CMUCAM4_COMMAND_OVERFLOW;
+}
+
+/*******************************************************************************
+* Television Commands
+*******************************************************************************/
+
+int monitorOff(cmucam4_instance_t *cam)
+{
+    return _voidCommandWrapper(cam, "M0\r", CMUCAM4_NON_FS_TIMEOUT);
+}
+
+int monitorOn(cmucam4_instance_t *cam)
+{
+    return _voidCommandWrapper(cam, "M1\r", CMUCAM4_NON_FS_TIMEOUT);
+}
+
+int monitorFreeze(cmucam4_instance_t *cam, int active)
+{
+    return (snprintf(cam->_cmdBuffer, CMUCAM4_CMD_BUFFER_SIZE,
+    "MF %d\r", active) < CMUCAM4_CMD_BUFFER_SIZE)
+    ? _voidCommandWrapper(cam, cam->_cmdBuffer, CMUCAM4_NON_FS_TIMEOUT)
+    : CMUCAM4_COMMAND_OVERFLOW;
+}
+
+int monitorSignal(cmucam4_instance_t *cam, int active)
+{
+    return (snprintf(cam->_cmdBuffer, CMUCAM4_CMD_BUFFER_SIZE,
+    "MS %d\r", active) < CMUCAM4_CMD_BUFFER_SIZE)
+    ? _voidCommandWrapper(cam, cam->_cmdBuffer, CMUCAM4_NON_FS_TIMEOUT)
+    : CMUCAM4_COMMAND_OVERFLOW;
+}
+
+/*******************************************************************************
+* Color Tracking Commands
+*******************************************************************************/
+
+int getTrackingParameters(cmucam4_instance_t *cam, CMUcam4_tracking_parameters_t * pointer)
+{
+    int errorValue; int resultValue;
+
+    if(pointer == NULL)
+    {
+        return CMUCAM4_RETURN_FAILURE;
+    }
+
+    if((errorValue = _commandWrapper(cam, "GT\r", CMUCAM4_NON_FS_TIMEOUT)))
+    {
+        return errorValue;
+    }
+
+    if((errorValue = setjmp(cam->_env)))
+    {
+        return errorValue;
+    }
+
+    _receiveData(cam);
+    resultValue = (sscanf(cam->_resBuffer, "%d %d %d %d %d %d ",
+    &(pointer->redMin),
+    &(pointer->redMax),
+    &(pointer->greenMin),
+    &(pointer->greenMax),
+    &(pointer->blueMin),
+    &(pointer->blueMax)) == 6);
+
+    _waitForIdle(cam);
+    return resultValue ? CMUCAM4_RETURN_SUCCESS : CMUCAM4_UNEXPECTED_RESPONCE;
+}
+
+int getTrackingWindow(cmucam4_instance_t *cam, CMUcam4_tracking_window_t * pointer)
+{
+    int errorValue; int resultValue;
+
+    if(pointer == NULL)
+    {
+        return CMUCAM4_RETURN_FAILURE;
+    }
+
+    if((errorValue = _commandWrapper(cam, "GW\r", CMUCAM4_NON_FS_TIMEOUT)))
+    {
+        return errorValue;
+    }
+
+    if((errorValue = setjmp(cam->_env)))
+    {
+        return errorValue;
+    }
+
+    _receiveData(cam);
+    resultValue = (sscanf(cam->_resBuffer, "%d %d %d %d ",
+    &(pointer->topLeftX),
+    &(pointer->topLeftY),
+    &(pointer->bottomRightX),
+    &(pointer->bottomRightY)) == 4);
+
+    _waitForIdle(cam);
+    return resultValue ? CMUCAM4_RETURN_SUCCESS : CMUCAM4_UNEXPECTED_RESPONCE;
+}
+
+int setTrackingParameters(cmucam4_instance_t *cam)
+{
+    return _voidCommandWrapper(cam, "ST\r", CMUCAM4_NON_FS_TIMEOUT);
+}
+
+int setTrackingParameters(cmucam4_instance_t *cam,
+								   int redMin, int redMax,
+                                   int greenMin, int greenMax,
+                                   int blueMin, int blueMax)
+{
+    return (snprintf(cam->_cmdBuffer, CMUCAM4_CMD_BUFFER_SIZE,
+    "ST %d %d %d %d %d %d\r",
+    redMin, redMax, greenMin, greenMax, blueMin, blueMax)
+    < CMUCAM4_CMD_BUFFER_SIZE)
+    ? _voidCommandWrapper(cam, cam->_cmdBuffer, CMUCAM4_NON_FS_TIMEOUT)
+    : CMUCAM4_COMMAND_OVERFLOW;
+}
+
+int setTrackingWindow(cmucam4_instance_t *cam)
+{
+    return _voidCommandWrapper(cam, "SW\r", CMUCAM4_NON_FS_TIMEOUT);
+}
+
+int setTrackingWindow(cmucam4_instance_t *cam, int topLeftX, int topLeftY,
+                               int bottomRightX, int bottomRightY)
+{
+    return (snprintf(cam->_cmdBuffer, CMUCAM4_CMD_BUFFER_SIZE,
+    "SW %d %d %d %d\r",
+    topLeftX, topLeftY, bottomRightX, bottomRightY)
+    < CMUCAM4_CMD_BUFFER_SIZE)
+    ? _voidCommandWrapper(cam, cam->_cmdBuffer, CMUCAM4_NON_FS_TIMEOUT)
+    : CMUCAM4_COMMAND_OVERFLOW;
+}
+
+int idleCamera(cmucam4_instance_t *cam)
+{
+    int errorValue; static int resetTries; char cmdBuffer[CMUCAM4_IC_LENGTH];
+
+    if(_state == DEACTIVATED)
+    {
+        return CMUCAM4_NOT_ACTIVATED;
+    }
+
+    if(snprintf(cmdBuffer, CMUCAM4_IC_LENGTH,
+    CMUCAM4_IC_STRING, (cam->_version / 100), (cam->_version % 100))
+    >= (int) CMUCAM4_IC_LENGTH)
+    {
+        return CMUCAM4_COMMAND_OVERFLOW;
+    }
+
+    resetTries = CMUCAM4_IDLE_TRIES;
+    errorValue = setjmp(cam->_env);
+
+    if(resetTries-- <= 0)
+    {
+        return errorValue;
+    }
+
+    _setReadTimeout(cam, CMUCAM4_IDLE_TIMEOUT);
+    cam->_com.write((uint8_t) '\0');
+    cam->_com.write((uint8_t) '\0');
+    cam->_com.write((uint8_t) '\0');
+    cam->_com.write("\rGV\r");
+    _waitForString(cam, cmdBuffer);
+
+    return CMUCAM4_RETURN_SUCCESS;
+}
+
+int trackColor(cmucam4_instance_t *cam)
+{
+    return _commandWrapper(cam, "TC\r", CMUCAM4_NON_FS_TIMEOUT);
+}
+
+int trackColor(cmucam4_instance_t *cam,
+						int redMin, int redMax,
+                        int greenMin, int greenMax,
+                        int blueMin, int blueMax)
+{
+    return (snprintf(cam->_cmdBuffer, CMUCAM4_CMD_BUFFER_SIZE,
+    "TC %d %d %d %d %d %d\r",
+    redMin, redMax, greenMin, greenMax, blueMin, blueMax)
+    < CMUCAM4_CMD_BUFFER_SIZE)
+    ? _commandWrapper(cam, cam->_cmdBuffer, CMUCAM4_NON_FS_TIMEOUT)
+    : CMUCAM4_COMMAND_OVERFLOW;
+}
+
+int trackWindow(cmucam4_instance_t *cam, int redRange, int greenRange, int blueRange)
+{
+    return (snprintf(cam->_cmdBuffer, CMUCAM4_CMD_BUFFER_SIZE,
+    "TW %d %d %d\r", redRange, greenRange, blueRange)
+    < CMUCAM4_CMD_BUFFER_SIZE)
+    ? _commandWrapper(cam, cam->_cmdBuffer, CMUCAM4_NON_FS_TIMEOUT)
+    : CMUCAM4_COMMAND_OVERFLOW;
+}
+
+int getHistogram(cmucam4_instance_t *cam, int channel, int bins)
+{
+    return (snprintf(cam->_cmdBuffer, CMUCAM4_CMD_BUFFER_SIZE,
+    "GH %d %d\r", channel, bins)
+    < CMUCAM4_CMD_BUFFER_SIZE)
+    ? _commandWrapper(cam, cam->_cmdBuffer, CMUCAM4_NON_FS_TIMEOUT)
+    : CMUCAM4_COMMAND_OVERFLOW;
+}
+
+int getMean(cmucam4_instance_t *cam)
+{
+    return _commandWrapper(cam, "GM\r", CMUCAM4_NON_FS_TIMEOUT);
+}
+
+int getTypeFDataPacket(cmucam4_instance_t *cam, CMUcam4_image_data_t * pointer)
+{
+    int errorValue;
+
+    if(pointer == NULL)
+    {
+        return CMUCAM4_RETURN_FAILURE;
+    }
+
+    if((errorValue = _responceWrapper(cam, 'F')))
+    {
+        return errorValue;
+    }
+
+    if(strcmp(cam->_resBuffer, "F ") != 0)
+    {
+        return CMUCAM4_UNEXPECTED_RESPONCE;
+    }
+
+    if((errorValue = setjmp(cam->_env)))
+    {
+        return errorValue;
+    }
+
+    _readBinary(cam, pointer->pixels, CMUCAM4_ID_T_LENGTH, CMUCAM4_ID_T_LENGTH, 0);
+
+    return (_readWithTimeout(cam) == '\r')
+    ? CMUCAM4_RETURN_SUCCESS : CMUCAM4_UNEXPECTED_RESPONCE;
+}
+
+int getTypeHDataPacket(cmucam4_instance_t *cam, CMUcam4_histogram_data_1_t * pointer)
+{
+    int errorValue; char * buffer = (cam->_resBuffer + sizeof('H')); size_t counter;
+
+    if(pointer == NULL)
+    {
+        return CMUCAM4_RETURN_FAILURE;
+    }
+
+    if((errorValue = _responceWrapper(cam, 'H')))
+    {
+        return errorValue;
+    }
+
+    for(counter = 0; counter < CMUCAM4_HD_1_T_LENGTH; counter++)
+    {
+        if((*buffer) == '\0')
+        {
+            return CMUCAM4_UNEXPECTED_RESPONCE;
+        }
+
+        pointer->bins[counter] = ((uint8_t) strtol(buffer, &buffer, 10));
+    }
+
+    if((*buffer) != '\0')
+    {
+        return CMUCAM4_UNEXPECTED_RESPONCE;
+    }
+
+    return CMUCAM4_RETURN_SUCCESS;
+}
 
 
 
