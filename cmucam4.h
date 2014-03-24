@@ -21,6 +21,7 @@
 #define _CMUCAM4_H_
 
 #include "cmucom4.h"
+#include "drivers/mss_uart/mss_uart.h"
 
 #include <setjmp.h>
 #include <stdbool.h>
@@ -1080,8 +1081,9 @@ CMUcam4_directory_entry_t;
 *******************************************************************************/
 struct CMUcam4
 {
-	unit8_t *buffer;
+	uint8_t *buffer;
 	mss_uart_instance_t* uart;
+
 	/***************************************************************************//**
 	* Millisecond timeout storage for use with CMUcam4::_readWithTimeout().
 	*******************************************************************************/
@@ -1134,12 +1136,7 @@ struct CMUcam4
 	*******************************************************************************/
 	jmp_buf _env;
 };
-typedef CMUcam4 cmucam4_instance_t;
-
-/***************************************************************************//**
-* Initialize the %CMUcam4 object to use the default Serial port.
-*******************************************************************************/
-CMUcam4_init ( cmucam4_instance_t *cam );
+typedef struct CMUcam4 cmucam4_instance_t;
 
 /***************************************************************************//**
 * Initialize the %CMUcam4 object to use the @c port Serial port.
@@ -1149,7 +1146,7 @@ CMUcam4_init ( cmucam4_instance_t *cam );
 * @see CMUCOM4_SERIAL2
 * @see CMUCOM4_SERIAL3
 *******************************************************************************/
-CMUcam4_init ( cmucam4_instance_t *cam, mss_uart_instance_t* uart );
+void CMUcam4_init ( cmucam4_instance_t *cam, mss_uart_instance_t *uart );
 
 /***************************************************************************//**
 * Gets a pixel (0 or 1) from a binary bitmap data structure.
@@ -1626,7 +1623,7 @@ int CMUCam4_getTrackingWindow(cmucam4_instance_t *cam, CMUcam4_tracking_window_t
 * Reset the color tracking threshold parameters to track all possible colors.
 * @return 0 on success and a negative error value on failure.
 *******************************************************************************/
-int CMUCam4_setTrackingParameters(cmucam4_instance_t *cam);
+int CMUCam4_resetTrackingParameters(cmucam4_instance_t *cam);
 
 /***************************************************************************//**
 * Set the color tracking threshold parameters to track a range of colors. A
@@ -1650,7 +1647,7 @@ int CMUCam4_setTrackingParameters(cmucam4_instance_t *cam,
 * Reset the color tracking window parameters to track all possible pixels.
 * @return 0 on success and a negative error value on failure.
 *******************************************************************************/
-int CMUCam4_setTrackingWindow(cmucam4_instance_t *cam);
+int CMUCam4_resetTrackingWindow(cmucam4_instance_t *cam);
 
 /***************************************************************************//**
 * Set the color tracking window parameters to track a range of pixels. A
@@ -1700,10 +1697,10 @@ int CMUCam4_trackColor(cmucam4_instance_t *cam);
 * @return 0 on success and a negative error value on failure.
 * @see CMUcam4::getTypeTDataPacket()
 *******************************************************************************/
-int CMUCam4_trackColor(cmucam4_instance_t *cam, 
-					   int redMin, int redMax,
-                       int greenMin, int greenMax,
-                       int blueMin, int blueMax);
+int CMUCam4_setAndTrackColor(cmucam4_instance_t *cam,
+					         int redMin, int redMax,
+                             int greenMin, int greenMax,
+                             int blueMin, int blueMax);
 
 /***************************************************************************//**
 * Causes the %CMUcam4 to enter stream mode and begin sending type T data
@@ -1793,7 +1790,7 @@ int CMUCam4_getTypeHDataPacket(cmucam4_instance_t *cam, CMUcam4_histogram_data_1
 * @see CMUcam4::getHistogram()
 * @see CMUcam4::lineMode()
 *******************************************************************************/
-int CMUCam4_getTypeHDataPacket(cmucam4_instance_t *cam, CMUcam4_histogram_data_2_t * pointer);
+int CMUCam4_getTypeH2DataPacket(cmucam4_instance_t *cam, CMUcam4_histogram_data_2_t * pointer);
 
 /***************************************************************************//**
 * Waits for a type H-4 data packet to appear in the data stream from the
@@ -1806,7 +1803,7 @@ int CMUCam4_getTypeHDataPacket(cmucam4_instance_t *cam, CMUcam4_histogram_data_2
 * @see CMUcam4::getHistogram()
 * @see CMUcam4::lineMode()
 *******************************************************************************/
-int CMUCam4_getTypeHDataPacket(cmucam4_instance_t *cam, CMUcam4_histogram_data_4_t * pointer);
+int CMUCam4_getTypeH4DataPacket(cmucam4_instance_t *cam, CMUcam4_histogram_data_4_t * pointer);
 
 /***************************************************************************//**
 * Waits for a type H-8 data packet to appear in the data stream from the
@@ -1819,7 +1816,7 @@ int CMUCam4_getTypeHDataPacket(cmucam4_instance_t *cam, CMUcam4_histogram_data_4
 * @see CMUcam4::getHistogram()
 * @see CMUcam4::lineMode()
 *******************************************************************************/
-int CMUCam4_getTypeHDataPacket(cmucam4_instance_t *cam, CMUcam4_histogram_data_8_t * pointer);
+int CMUCam4_getTypeH8DataPacket(cmucam4_instance_t *cam, CMUcam4_histogram_data_8_t * pointer);
 
 /***************************************************************************//**
 * Waits for a type H-16 data packet to appear in the data stream from the
@@ -1832,7 +1829,7 @@ int CMUCam4_getTypeHDataPacket(cmucam4_instance_t *cam, CMUcam4_histogram_data_8
 * @see CMUcam4::getHistogram()
 * @see CMUcam4::lineMode()
 *******************************************************************************/
-int CMUCam4_getTypeHDataPacket(cmucam4_instance_t *cam, CMUcam4_histogram_data_16_t * pointer);
+int CMUCam4_getTypeH16DataPacket(cmucam4_instance_t *cam, CMUcam4_histogram_data_16_t * pointer);
 
 /***************************************************************************//**
 * Waits for a type H-32 data packet to appear in the data stream from the
@@ -1845,7 +1842,7 @@ int CMUCam4_getTypeHDataPacket(cmucam4_instance_t *cam, CMUcam4_histogram_data_1
 * @see CMUcam4::getHistogram()
 * @see CMUcam4::lineMode()
 *******************************************************************************/
-int CMUCam4_getTypeHDataPacket(cmucam4_instance_t *cam, CMUcam4_histogram_data_32_t * pointer);
+int CMUCam4_getTypeH32DataPacket(cmucam4_instance_t *cam, CMUcam4_histogram_data_32_t * pointer);
 
 /***************************************************************************//**
 * Waits for a type H-64 data packet to appear in the data stream from the
@@ -1858,7 +1855,7 @@ int CMUCam4_getTypeHDataPacket(cmucam4_instance_t *cam, CMUcam4_histogram_data_3
 * @see CMUcam4::getHistogram()
 * @see CMUcam4::lineMode()
 *******************************************************************************/
-int CMUCam4_getTypeHDataPacket(cmucam4_instance_t *cam, CMUcam4_histogram_data_64_t * pointer);
+int CMUCam4_getTypeH64DataPacket(cmucam4_instance_t *cam, CMUcam4_histogram_data_64_t * pointer);
 
 /***************************************************************************//**
 * Waits for a type S data packet to appear in the data stream from the %CMUcam4
@@ -2120,8 +2117,6 @@ int CMUCam4_sendFrame(cmucam4_instance_t *cam, int horizontalResolution, int ver
               size_t horizonalSize, size_t horizontalOffset,
               size_t verticalSize, size_t verticalOffset);
 
-private:
-
 /***************************************************************************//**
 * Sends a command to the %CMUcam4 and receives a void responce.
 * @param [in] command The command string to be sent.
@@ -2224,8 +2219,7 @@ void _setReadTimeout(cmucam4_instance_t *cam, unsigned long timeout);
 *******************************************************************************/
 int _readWithTimeout(cmucam4_instance_t *cam);
 
-
-
+extern cmucam4_instance_t cmucam4;
 
 #endif
 
