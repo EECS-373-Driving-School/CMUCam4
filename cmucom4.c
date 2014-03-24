@@ -5,16 +5,16 @@
  *      Author: nick
  */
 
+#include <stdlib.h>
+#include <string.h>
 #include "cmucom4.h"
 #include "drivers/mss_uart/mss_uart.h"
 
 cmucom4_instance_t cmucom4_1;
-const cmucom4_exception_t CMUCOM4_NOT_IMPLEMENTED = 1;
 
 void CMUcom4_init ( cmucom4_instance_t *cmucom4, mss_uart_instance_t* uart )
 {
 	cmucom4->buffer = calloc(CMUCOM_RX_BUFFER_SIZE, sizeof(uint8_t));
-	cmucom4->cur_elem = cmucom4_buffer;
 	cmucom4->uart = uart;
 }
 
@@ -38,29 +38,31 @@ uint8_t CMUcom4_read ( cmucom4_instance_t *cmucom4 )
 	return *cmucom4->buffer;
 }
 
-void CMUcom4_write ( cmucom4_instance_t *cmucom4, uint8_t *data, size_t size )
+size_t CMUcom4_write ( cmucom4_instance_t *cmucom4, const uint8_t *data, size_t size )
 {
 	MSS_UART_polled_tx(cmucom4->uart, data, size);
+
+	return size;
 }
 
-void CMUcom4_write ( cmucom4_instance_t *cmucom4, const char *data )
+size_t CMUcom4_write_str ( cmucom4_instance_t *cmucom4, const char *data )
 {
 	MSS_UART_polled_tx_string(cmucom4->uart, data);
+
+	return strlen(data) + 1;
 }
 
-void CMUcom4_write ( cmucom4_instance_t *cmucom4, uint8_t data )
+size_t CMUcom4_write_byte ( cmucom4_instance_t *cmucom4, uint8_t data )
 {
 	CMUcom4_write(cmucom4, &data, sizeof(data));
 }
 
 int CMUcom4_available ( cmucom4_instance_t *cmucom4 )
 {
-	throw CMUCOM4_NOT_IMPLEMENTED;
 	return -1;
 }
 
 unsigned long CMUcom4_milliseconds ( cmucom4_instance_t *cmucom4 )
 {
-	throw CMUCOM4_NOT_IMPLEMENTED;
 	return -1;
 }
