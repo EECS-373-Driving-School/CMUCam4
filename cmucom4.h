@@ -8,16 +8,33 @@
 #ifndef CMUCOM4_H_
 #define CMUCOM4_H_
 
+#include <stdint.h>
+#include <inttypes.h>
 #include "drivers/mss_uart/mss_uart.h"
 
 #define CMUCOM_RX_BUFFER_SIZE 1
+#define CMUCOM4_INPUT_BUFFER_SIZE CMUCOM_RX_BUFFER_SIZE
+
+// TODO: figure out correct buffer size
+#define CMUCOM4_OUTPUT_BUFFER_SIZE 1
+
+#define CMUCOM4_N_TO_S(x)           #x
+#define CMUCOM4_V_TO_S(x)           CMUCOM4_N_TO_S(x)
+
+#define CMUCOM4_FAST_STOP_BITS      0
+
+#define CMUCOM4_FAST_BR_STRING "250000"
+#define CMUCOM4_FAST_SB_STRING      CMUCOM4_V_TO_S(CMUCOM4_FAST_STOP_BITS)
+
+
 
 struct CMUcom4
 {
-	unit8_t *buffer;
+	uint8_t *buffer;
 	mss_uart_instance_t* uart;
 };
-typedef CMUcom4 cmucom4_instance_t;
+
+typedef struct CMUcom4 cmucom4_instance_t;
 
 extern cmucom4_instance_t cmucom4_1;
 
@@ -44,29 +61,26 @@ uint8_t CMUcom4_read ( cmucom4_instance_t* );
 /**
  * Write contents of buffer to device
  */
-size_t CMUcom4_write ( cmucom4_instance_t*, const unint8_t*, size_t );
+size_t CMUcom4_write ( cmucom4_instance_t*, const uint8_t*, size_t );
 
 /**
  * Write null-terminated string to device
  */
-size_t CMUcom4_write ( cmucom4_instance_t*, const char* );
+size_t CMUcom4_write_str ( cmucom4_instance_t*, const char* );
 
 /**
  * Write a single byte to device
  */
-size_t CMUcom4_write ( cmucom4_instance_t*, uint8_t );
+size_t CMUcom4_write_byte ( cmucom4_instance_t*, uint8_t );
 
 /**
  * Number of bytes available to be read
  */
-int CMUcom4_available ( cmucom4_instance_t*, uint8_t );
+int CMUcom4_available ( cmucom4_instance_t* );
 
 /**
  * Number of milliseconds since program started
  */
 unsigned long CMUcom4_milliseconds ( cmucom4_instance_t* );
-
-typedef uint8_t cmucom4_exception_t;
-extern const cmucom4_exception_t CMUCOM4_NOT_IMPLEMENTED;
 
 #endif /* CMUCOM4_H_ */
