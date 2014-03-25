@@ -1,5 +1,5 @@
-#include "cmucam4.h"
-#include "cmucom4.h"
+#include "CMUcam4.h"
+#include "CMUcom4.h"
 #include "drivers/mss_uart/mss_uart.h"
 
 cmucam4_instance_t cmucam4;
@@ -14,7 +14,7 @@ void CMUCam4_init ( cmucam4_instance_t *cmucam4, mss_uart_instance_t* uart )
 * Helper Functions
 *******************************************************************************/
 
-int getPixel( CMUcam4_image_data_t * pointer,
+int CMUCam4_getPixel( CMUcam4_image_data_t * pointer,
                       int row, int column)
 {
     if((pointer==NULL)||
@@ -28,7 +28,7 @@ int getPixel( CMUcam4_image_data_t * pointer,
     >> (7 - (column & 7))) & 1);
 }
 
-int setPixel(CMUcam4_image_data_t * pointer,
+int CMUCam4_setPixel(CMUcam4_image_data_t * pointer,
                       int row, int column, int value)
 {
     int bitIndex; int byteIndex;
@@ -49,7 +49,7 @@ int setPixel(CMUcam4_image_data_t * pointer,
     return CMUCAM4_RETURN_SUCCESS;
 }
 
-int andPixels(CMUcam4_image_data_t * destination,
+int CMUCam4_andPixels(CMUcam4_image_data_t * destination,
                        CMUcam4_image_data_t * source0,
                        CMUcam4_image_data_t * source1)
 {
@@ -69,7 +69,7 @@ int andPixels(CMUcam4_image_data_t * destination,
     return CMUCAM4_RETURN_SUCCESS;
 }
 
-int orPixels(CMUcam4_image_data_t * destination,
+int CMUCam4_orPixels(CMUcam4_image_data_t * destination,
                       CMUcam4_image_data_t * source0,
                       CMUcam4_image_data_t * source1)
 {
@@ -89,7 +89,7 @@ int orPixels(CMUcam4_image_data_t * destination,
     return CMUCAM4_RETURN_SUCCESS;
 }
 
-int xorPixels(CMUcam4_image_data_t * destination,
+int CMUCam4_xorPixels(CMUcam4_image_data_t * destination,
                        CMUcam4_image_data_t * source0,
                        CMUcam4_image_data_t * source1)
 {
@@ -109,7 +109,7 @@ int xorPixels(CMUcam4_image_data_t * destination,
     return CMUCAM4_RETURN_SUCCESS;
 }
 
-int notPixels(CMUcam4_image_data_t * destination)
+int CMUCam4_notPixels(CMUcam4_image_data_t * destination)
 {
     size_t index;
 
@@ -127,7 +127,7 @@ int notPixels(CMUcam4_image_data_t * destination)
     return CMUCAM4_RETURN_SUCCESS;
 }
 
-int isReadOnly(CMUcam4_directory_entry_t * pointer)
+int CMUCam4_isReadOnly(CMUcam4_directory_entry_t * pointer)
 {
     CMUcam4_entry_attributes_t * attributes;
 
@@ -140,7 +140,7 @@ int isReadOnly(CMUcam4_directory_entry_t * pointer)
     return (attributes->readOnly == 'R');
 }
 
-int isHidden(CMUcam4_directory_entry_t * pointer)
+int CMUCam4_isHidden(CMUcam4_directory_entry_t * pointer)
 {
     CMUcam4_entry_attributes_t * attributes;
 
@@ -153,7 +153,7 @@ int isHidden(CMUcam4_directory_entry_t * pointer)
     return (attributes->hidden == 'H');
 }
 
-int isSystem(CMUcam4_directory_entry_t * pointer)
+int CMUCam4_isSystem(CMUcam4_directory_entry_t * pointer)
 {
     CMUcam4_entry_attributes_t * attributes;
 
@@ -167,7 +167,7 @@ int isSystem(CMUcam4_directory_entry_t * pointer)
 }
 
 
-int isVolumeID(CMUcam4_directory_entry_t * pointer)
+int CMUCam4_isVolumeID(CMUcam4_directory_entry_t * pointer)
 {
     CMUcam4_entry_attributes_t * attributes;
 
@@ -180,7 +180,7 @@ int isVolumeID(CMUcam4_directory_entry_t * pointer)
     return (attributes->volumeID == 'V');
 }
 
-int isDirectory(CMUcam4_directory_entry_t * pointer)
+int CMUCam4_isDirectory(CMUcam4_directory_entry_t * pointer)
 {
     CMUcam4_entry_attributes_t * attributes;
 
@@ -193,7 +193,7 @@ int isDirectory(CMUcam4_directory_entry_t * pointer)
     return (attributes->directory == 'D');
 }
 
-int isArchive(CMUcam4_directory_entry_t * pointer)
+int CMUCam4_isArchive(CMUcam4_directory_entry_t * pointer)
 {
     CMUcam4_entry_attributes_t * attributes;
 
@@ -237,7 +237,7 @@ int CMUCam4_begin(cmucam4_instance_t *cam)
     CMUcom4_write_byte(&cam->_com, (uint8_t) '\0');
     CMUcom4_write_byte(&cam->_com, (uint8_t) '\0');
     CMUcom4_write_byte(&cam->_com, (uint8_t) '\0');
-    CMUcom4_write_string(&cam->_com, "\rRS\r");
+    CMUcom4_write_str(&cam->_com, "\rRS\r");
 
     CMUcom4_end(&cam->_com);
 
@@ -273,14 +273,14 @@ int CMUCam4_begin(cmucam4_instance_t *cam)
     _setReadTimeout(cam, CMUCAM4_NON_FS_TIMEOUT);
 
     // Set baud rate to 250000
-    CMUcom4_write_string(&cam->_com, "BM ");
-    CMUcom4_write_string(&cam->_com, CMUCOM4_FAST_BR_STRING);
+    CMUcom4_write_str(&cam->_com, "BM ");
+    CMUcom4_write_str(&cam->_com, CMUCOM4_FAST_BR_STRING);
     CMUcom4_write_byte(&cam->_com, (uint8_t) '\r');
     _waitForResponce(cam);
 
     // Adjust the stop bits.
-    CMUcom4_write_string(&cam->_com, "DM ");
-    CMUcom4_write_string(&cam->_com, CMUCOM4_FAST_SB_STRING);
+    CMUcom4_write_str(&cam->_com, "DM ");
+    CMUcom4_write_str(&cam->_com, CMUCOM4_FAST_SB_STRING);
     CMUcom4_write_byte(&cam->_com, (uint8_t) '\r');
     _waitForResponce(cam);
 
@@ -385,7 +385,7 @@ int CMUCam4_autoWhiteBalance(cmucam4_instance_t *cam, int active)
 * Camera Format Commands
 *******************************************************************************/
 
-int horizontalMirror(cmucam4_instance_t *cam, int active)
+int CMUCam4_horizontalMirror(cmucam4_instance_t *cam, int active)
 {
     return (snprintf(cam->_cmdBuffer, CMUCAM4_CMD_BUFFER_SIZE,
     "HM %d\r", active) < CMUCAM4_CMD_BUFFER_SIZE)
@@ -393,7 +393,7 @@ int horizontalMirror(cmucam4_instance_t *cam, int active)
     : CMUCAM4_COMMAND_OVERFLOW;
 }
 
-int verticalFlip(cmucam4_instance_t *cam, int active)
+int CMUCam4_verticalFlip(cmucam4_instance_t *cam, int active)
 {
     return (snprintf(cam->_cmdBuffer, CMUCAM4_CMD_BUFFER_SIZE,
     "VF %d\r", active) < CMUCAM4_CMD_BUFFER_SIZE)
@@ -406,7 +406,7 @@ int verticalFlip(cmucam4_instance_t *cam, int active)
 * Camera Effect Commands
 *******************************************************************************/
 
-int blackAndWhiteMode(cmucam4_instance_t *cam, int active)
+int CMUCam4_blackAndWhiteMode(cmucam4_instance_t *cam, int active)
 {
     return (snprintf(cam->_cmdBuffer, CMUCAM4_CMD_BUFFER_SIZE,
     "BW %d\r", active) < CMUCAM4_CMD_BUFFER_SIZE)
@@ -414,7 +414,7 @@ int blackAndWhiteMode(cmucam4_instance_t *cam, int active)
     : CMUCAM4_COMMAND_OVERFLOW;
 }
 
-int negativeMode(cmucam4_instance_t *cam, int active)
+int CMUCam4_negativeMode(cmucam4_instance_t *cam, int active)
 {
     return (snprintf(cam->_cmdBuffer, CMUCAM4_CMD_BUFFER_SIZE,
     "NG %d\r", active) < CMUCAM4_CMD_BUFFER_SIZE)
@@ -426,12 +426,12 @@ int negativeMode(cmucam4_instance_t *cam, int active)
 * Auxiliary I/O Commands
 *******************************************************************************/
 
-int getButtonState(cmucam4_instance_t *cam)
+int CMUCam4_getButtonState(cmucam4_instance_t *cam)
 {
     return _intCommandWrapper(cam, "GB\r", CMUCAM4_NON_FS_TIMEOUT);
 }
 
-long getButtonDuration(cmucam4_instance_t *cam)
+long CMUCam4_getButtonDuration(cmucam4_instance_t *cam)
 {
     int errorValue; int resultValue; long returnValue;
 
@@ -452,22 +452,22 @@ long getButtonDuration(cmucam4_instance_t *cam)
     return resultValue ? returnValue : CMUCAM4_UNEXPECTED_RESPONCE;
 }
 
-int getButtonPressed(cmucam4_instance_t *cam)
+int CMUCam4_getButtonPressed(cmucam4_instance_t *cam)
 {
     return _intCommandWrapper(cam, "GP\r", CMUCAM4_NON_FS_TIMEOUT);
 }
 
-int getButtonReleased(cmucam4_instance_t *cam)
+int CMUCam4_getButtonReleased(cmucam4_instance_t *cam)
 {
     return _intCommandWrapper(cam, "GR\r", CMUCAM4_NON_FS_TIMEOUT);
 }
 
-int panInput(cmucam4_instance_t *cam)
+int CMUCam4_panInput(cmucam4_instance_t *cam)
 {
     return _intCommandWrapper(cam, "PI\r", CMUCAM4_NON_FS_TIMEOUT);
 }
 
-int panOutput(cmucam4_instance_t *cam, int direction, int output)
+int CMUCam4_panOutput(cmucam4_instance_t *cam, int direction, int output)
 {
     return (snprintf(cam->_cmdBuffer, CMUCAM4_CMD_BUFFER_SIZE,
     "PO %d %d\r", direction, output) < CMUCAM4_CMD_BUFFER_SIZE)
@@ -475,12 +475,12 @@ int panOutput(cmucam4_instance_t *cam, int direction, int output)
     : CMUCAM4_COMMAND_OVERFLOW;
 }
 
-int tiltInput(cmucam4_instance_t *cam)
+int CMUCam4_tiltInput(cmucam4_instance_t *cam)
 {
     return _intCommandWrapper(cam, "TI\r", CMUCAM4_NON_FS_TIMEOUT);
 }
 
-int tiltOutput(cmucam4_instance_t *cam, int direction, int output)
+int CMUCam4_tiltOutput(cmucam4_instance_t *cam, int direction, int output)
 {
     return (snprintf(cam->_cmdBuffer, CMUCAM4_CMD_BUFFER_SIZE,
     "TO %d %d\r", direction, output) < CMUCAM4_CMD_BUFFER_SIZE)
@@ -488,12 +488,12 @@ int tiltOutput(cmucam4_instance_t *cam, int direction, int output)
     : CMUCAM4_COMMAND_OVERFLOW;
 }
 
-int getInputs(cmucam4_instance_t *cam)
+int CMUCam4_getInputs(cmucam4_instance_t *cam)
 {
     return _intCommandWrapper(cam, "GI\r", CMUCAM4_NON_FS_TIMEOUT);
 }
 
-int setOutputs(cmucam4_instance_t *cam, int directions, int outputs)
+int CMUCam4_setOutputs(cmucam4_instance_t *cam, int directions, int outputs)
 {
     return (snprintf(cam->_cmdBuffer, CMUCAM4_CMD_BUFFER_SIZE,
     "SO %d %d\r", directions, outputs) < CMUCAM4_CMD_BUFFER_SIZE)
@@ -501,12 +501,12 @@ int setOutputs(cmucam4_instance_t *cam, int directions, int outputs)
     : CMUCAM4_COMMAND_OVERFLOW;
 }
 
-int LEDOff(cmucam4_instance_t *cam)
+int CMUCam4_LEDOff(cmucam4_instance_t *cam)
 {
     return _voidCommandWrapper(cam, "L0\r", CMUCAM4_NON_FS_TIMEOUT);
 }
 
-int LEDOn(cmucam4_instance_t *cam, long frequency)
+int CMUCam4_LEDOn(cmucam4_instance_t *cam, long frequency)
 {
     return (snprintf(cam->_cmdBuffer, CMUCAM4_CMD_BUFFER_SIZE,
     "L1 %ld\r", frequency) < CMUCAM4_CMD_BUFFER_SIZE)
@@ -518,7 +518,7 @@ int LEDOn(cmucam4_instance_t *cam, long frequency)
 * Servo Commands
 *******************************************************************************/
 
-int getServoPosition(cmucam4_instance_t *cam, int servo)
+int CMUCam4_getServoPosition(cmucam4_instance_t *cam, int servo)
 {
     return (snprintf(cam->_cmdBuffer, CMUCAM4_CMD_BUFFER_SIZE,
     "GS %d\r", servo) < CMUCAM4_CMD_BUFFER_SIZE)
@@ -526,7 +526,7 @@ int getServoPosition(cmucam4_instance_t *cam, int servo)
     : CMUCAM4_COMMAND_OVERFLOW;
 }
 
-int setServoPosition(cmucam4_instance_t *cam, int servo, int active, int pulseLength)
+int CMUCam4_setServoPosition(cmucam4_instance_t *cam, int servo, int active, int pulseLength)
 {
     return (snprintf(cam->_cmdBuffer, CMUCAM4_CMD_BUFFER_SIZE,
     "SS %d %d %d\r", servo, active, pulseLength) < CMUCAM4_CMD_BUFFER_SIZE)
@@ -534,7 +534,7 @@ int setServoPosition(cmucam4_instance_t *cam, int servo, int active, int pulseLe
     : CMUCAM4_COMMAND_OVERFLOW;
 }
 
-int automaticPan(cmucam4_instance_t *cam, int active, int reverse)
+int CMUCam4_automaticPan(cmucam4_instance_t *cam, int active, int reverse)
 {
     return (snprintf(cam->_cmdBuffer, CMUCAM4_CMD_BUFFER_SIZE,
     "AP %d %d\r", active, reverse) < CMUCAM4_CMD_BUFFER_SIZE)
@@ -542,7 +542,7 @@ int automaticPan(cmucam4_instance_t *cam, int active, int reverse)
     : CMUCAM4_COMMAND_OVERFLOW;
 }
 
-int automaticTilt(cmucam4_instance_t *cam, int active, int reverse)
+int CMUCam4_automaticTilt(cmucam4_instance_t *cam, int active, int reverse)
 {
     return (snprintf(cam->_cmdBuffer, CMUCAM4_CMD_BUFFER_SIZE,
     "AT %d %d\r", active, reverse) < CMUCAM4_CMD_BUFFER_SIZE)
@@ -550,7 +550,7 @@ int automaticTilt(cmucam4_instance_t *cam, int active, int reverse)
     : CMUCAM4_COMMAND_OVERFLOW;
 }
 
-int autoPanParameters(cmucam4_instance_t *cam, int proportionalGain, int derivativeGain)
+int CMUCam4_autoPanParameters(cmucam4_instance_t *cam, int proportionalGain, int derivativeGain)
 {
     return (snprintf(cam->_cmdBuffer, CMUCAM4_CMD_BUFFER_SIZE,
     "PP %d %d\r", proportionalGain, derivativeGain) < CMUCAM4_CMD_BUFFER_SIZE)
@@ -558,7 +558,7 @@ int autoPanParameters(cmucam4_instance_t *cam, int proportionalGain, int derivat
     : CMUCAM4_COMMAND_OVERFLOW;
 }
 
-int autoTiltParameters(cmucam4_instance_t *cam, int proportionalGain, int derivativeGain)
+int CMUCam4_autoTiltParameters(cmucam4_instance_t *cam, int proportionalGain, int derivativeGain)
 {
     return (snprintf(cam->_cmdBuffer, CMUCAM4_CMD_BUFFER_SIZE,
     "TP %d %d\r", proportionalGain, derivativeGain) < CMUCAM4_CMD_BUFFER_SIZE)
@@ -721,16 +721,16 @@ int CMUCam4_idleCamera(cmucam4_instance_t *cam)
     }
 
     _setReadTimeout(cam, CMUCAM4_IDLE_TIMEOUT);
-    CMUCom4_write_byte(cam->_com, (uint8_t)'\0');
-    CMUCom4_write_byte(cam->_com, (uint8_t)'\0');
-    CMUCom4_write_byte(cam->_com, (uint8_t)'\0');
-    CMUCom4_write_string(cam->_com, "\rGV\r");
+    CMUcom4_write_byte(&cam->_com, (uint8_t)'\0');
+    CMUcom4_write_byte(&cam->_com, (uint8_t)'\0');
+    CMUcom4_write_byte(&cam->_com, (uint8_t)'\0');
+    CMUcom4_write_str(&cam->_com, "\rGV\r");
     _waitForString(cam, cmdBuffer);
 
     return CMUCAM4_RETURN_SUCCESS;
 }
 
-int trackColor(cmucam4_instance_t *cam)
+int CMUCam4_trackColor(cmucam4_instance_t *cam)
 {
     return _commandWrapper(cam, "TC\r", CMUCAM4_NON_FS_TIMEOUT);
 }
@@ -748,7 +748,7 @@ int CMUCam4_setAndTrackColor(cmucam4_instance_t *cam,
     : CMUCAM4_COMMAND_OVERFLOW;
 }
 
-int trackWindow(cmucam4_instance_t *cam, int redRange, int greenRange, int blueRange)
+int CMUCam4_trackWindow(cmucam4_instance_t *cam, int redRange, int greenRange, int blueRange)
 {
     return (snprintf(cam->_cmdBuffer, CMUCAM4_CMD_BUFFER_SIZE,
     "TW %d %d %d\r", redRange, greenRange, blueRange)
@@ -757,7 +757,7 @@ int trackWindow(cmucam4_instance_t *cam, int redRange, int greenRange, int blueR
     : CMUCAM4_COMMAND_OVERFLOW;
 }
 
-int getHistogram(cmucam4_instance_t *cam, int channel, int bins)
+int CMUCam4_getHistogram(cmucam4_instance_t *cam, int channel, int bins)
 {
     return (snprintf(cam->_cmdBuffer, CMUCAM4_CMD_BUFFER_SIZE,
     "GH %d %d\r", channel, bins)
@@ -766,12 +766,12 @@ int getHistogram(cmucam4_instance_t *cam, int channel, int bins)
     : CMUCAM4_COMMAND_OVERFLOW;
 }
 
-int getMean(cmucam4_instance_t *cam)
+int CMUCam4_getMean(cmucam4_instance_t *cam)
 {
     return _commandWrapper(cam, "GM\r", CMUCAM4_NON_FS_TIMEOUT);
 }
 
-int getTypeFDataPacket(cmucam4_instance_t *cam, CMUcam4_image_data_t * pointer)
+int CMUCam4_getTypeFDataPacket(cmucam4_instance_t *cam, CMUcam4_image_data_t * pointer)
 {
     int errorValue;
 
@@ -801,7 +801,7 @@ int getTypeFDataPacket(cmucam4_instance_t *cam, CMUcam4_image_data_t * pointer)
     ? CMUCAM4_RETURN_SUCCESS : CMUCAM4_UNEXPECTED_RESPONCE;
 }
 
-int getTypeHDataPacket(cmucam4_instance_t *cam, CMUcam4_histogram_data_1_t * pointer)
+int CMUCam4_getTypeHDataPacket(cmucam4_instance_t *cam, CMUcam4_histogram_data_1_t * pointer)
 {
     int errorValue; char * buffer = (cam->_resBuffer + sizeof('H')); size_t counter;
 
@@ -865,7 +865,7 @@ int CMUCam4_getTypeH2DataPacket(cmucam4_instance_t *cam, CMUcam4_histogram_data_
     return CMUCAM4_RETURN_SUCCESS;
 }
 
-int getTypeH4DataPacket(cmucam4_instance_t *cam, CMUcam4_histogram_data_4_t * pointer)
+int CMUCam4_getTypeH4DataPacket(cmucam4_instance_t *cam, CMUcam4_histogram_data_4_t * pointer)
 {
     int errorValue; char * buffer = (cam->_resBuffer + sizeof('H')); size_t counter;
 
@@ -897,7 +897,7 @@ int getTypeH4DataPacket(cmucam4_instance_t *cam, CMUcam4_histogram_data_4_t * po
     return CMUCAM4_RETURN_SUCCESS;
 }
 
-int getTypeH8DataPacket(cmucam4_instance_t *cam, CMUcam4_histogram_data_8_t * pointer)
+int CMUCam4_getTypeH8DataPacket(cmucam4_instance_t *cam, CMUcam4_histogram_data_8_t * pointer)
 {
     int errorValue; char * buffer = (cam->_resBuffer + sizeof('H')); size_t counter;
 
@@ -929,7 +929,7 @@ int getTypeH8DataPacket(cmucam4_instance_t *cam, CMUcam4_histogram_data_8_t * po
     return CMUCAM4_RETURN_SUCCESS;
 }
 
-int getTypeH16DataPacket(cmucam4_instance_t *cam, CMUcam4_histogram_data_16_t * pointer)
+int CMUCam4_getTypeH16DataPacket(cmucam4_instance_t *cam, CMUcam4_histogram_data_16_t * pointer)
 {
     int errorValue; char * buffer = (cam->_resBuffer + sizeof('H')); size_t counter;
 
@@ -961,7 +961,7 @@ int getTypeH16DataPacket(cmucam4_instance_t *cam, CMUcam4_histogram_data_16_t * 
     return CMUCAM4_RETURN_SUCCESS;
 }
 
-int getTypeH32DataPacket(cmucam4_instance_t *cam, CMUcam4_histogram_data_32_t * pointer)
+int CMUCam4_getTypeH32DataPacket(cmucam4_instance_t *cam, CMUcam4_histogram_data_32_t * pointer)
 {
     int errorValue; char * buffer = (cam->_resBuffer + sizeof('H')); size_t counter;
 
@@ -993,7 +993,7 @@ int getTypeH32DataPacket(cmucam4_instance_t *cam, CMUcam4_histogram_data_32_t * 
     return CMUCAM4_RETURN_SUCCESS;
 }
 
-int getTypeH64DataPacket(cmucam4_instance_t *cam, CMUcam4_histogram_data_64_t * pointer)
+int CMUCam4_getTypeH64DataPacket(cmucam4_instance_t *cam, CMUcam4_histogram_data_64_t * pointer)
 {
     int errorValue; char * buffer = (cam->_resBuffer + sizeof('H')); size_t counter;
 
@@ -1026,7 +1026,7 @@ int getTypeH64DataPacket(cmucam4_instance_t *cam, CMUcam4_histogram_data_64_t * 
 }
 
 
-int getTypeSDataPacket(cmucam4_instance_t *cam, CMUcam4_statistics_data_t * pointer)
+int CMUCam4_getTypeSDataPacket(cmucam4_instance_t *cam, CMUcam4_statistics_data_t * pointer)
 {
     int errorValue;
 
@@ -1057,7 +1057,7 @@ int getTypeSDataPacket(cmucam4_instance_t *cam, CMUcam4_statistics_data_t * poin
     ? CMUCAM4_RETURN_SUCCESS : CMUCAM4_UNEXPECTED_RESPONCE;
 }
 
-int getTypeTDataPacket(cmucam4_instance_t *cam, CMUcam4_tracking_data_t * pointer)
+int CMUCam4_getTypeTDataPacket(cmucam4_instance_t *cam, CMUcam4_tracking_data_t * pointer)
 {
     int errorValue;
 
@@ -1084,7 +1084,7 @@ int getTypeTDataPacket(cmucam4_instance_t *cam, CMUcam4_tracking_data_t * pointe
     ? CMUCAM4_RETURN_SUCCESS : CMUCAM4_UNEXPECTED_RESPONCE;
 }
 
-int pollMode(cmucam4_instance_t *cam, int active)
+int CMUCam4_pollMode(cmucam4_instance_t *cam, int active)
 {
     return (snprintf(cam->_cmdBuffer, CMUCAM4_CMD_BUFFER_SIZE,
     "PM %d\r", active) < CMUCAM4_CMD_BUFFER_SIZE)
@@ -1092,7 +1092,7 @@ int pollMode(cmucam4_instance_t *cam, int active)
     : CMUCAM4_COMMAND_OVERFLOW;
 }
 
-int lineMode(cmucam4_instance_t *cam, int active)
+int CMUCam4_lineMode(cmucam4_instance_t *cam, int active)
 {
     return (snprintf(cam->_cmdBuffer, CMUCAM4_CMD_BUFFER_SIZE,
     "LM %d\r", active) < CMUCAM4_CMD_BUFFER_SIZE)
@@ -1100,7 +1100,7 @@ int lineMode(cmucam4_instance_t *cam, int active)
     : CMUCAM4_COMMAND_OVERFLOW;
 }
 
-int switchingMode(cmucam4_instance_t *cam, int active)
+int CMUCam4_switchingMode(cmucam4_instance_t *cam, int active)
 {
     return (snprintf(cam->_cmdBuffer, CMUCAM4_CMD_BUFFER_SIZE,
     "SM %d\r", active) < CMUCAM4_CMD_BUFFER_SIZE)
@@ -1108,7 +1108,7 @@ int switchingMode(cmucam4_instance_t *cam, int active)
     : CMUCAM4_COMMAND_OVERFLOW;
 }
 
-int testMode(cmucam4_instance_t *cam, int active)
+int CMUCam4_testMode(cmucam4_instance_t *cam, int active)
 {
     return (snprintf(cam->_cmdBuffer, CMUCAM4_CMD_BUFFER_SIZE,
     "TM %d\r", active) < CMUCAM4_CMD_BUFFER_SIZE)
@@ -1116,7 +1116,7 @@ int testMode(cmucam4_instance_t *cam, int active)
     : CMUCAM4_COMMAND_OVERFLOW;
 }
 
-int colorTracking(cmucam4_instance_t *cam, int active)
+int CMUCam4_colorTracking(cmucam4_instance_t *cam, int active)
 {
     return (snprintf(cam->_cmdBuffer, CMUCAM4_CMD_BUFFER_SIZE,
     "CT %d\r", active) < CMUCAM4_CMD_BUFFER_SIZE)
@@ -1124,7 +1124,7 @@ int colorTracking(cmucam4_instance_t *cam, int active)
     : CMUCAM4_COMMAND_OVERFLOW;
 }
 
-int histogramTracking(cmucam4_instance_t *cam, int active)
+int CMUCam4_histogramTracking(cmucam4_instance_t *cam, int active)
 {
     return (snprintf(cam->_cmdBuffer, CMUCAM4_CMD_BUFFER_SIZE,
     "HT %d\r", active) < CMUCAM4_CMD_BUFFER_SIZE)
@@ -1132,7 +1132,7 @@ int histogramTracking(cmucam4_instance_t *cam, int active)
     : CMUCAM4_COMMAND_OVERFLOW;
 }
 
-int invertedFilter(cmucam4_instance_t *cam, int active)
+int CMUCam4_invertedFilter(cmucam4_instance_t *cam, int active)
 {
     return (snprintf(cam->_cmdBuffer, CMUCAM4_CMD_BUFFER_SIZE,
     "IF %d\r", active) < CMUCAM4_CMD_BUFFER_SIZE)
@@ -1140,7 +1140,7 @@ int invertedFilter(cmucam4_instance_t *cam, int active)
     : CMUCAM4_COMMAND_OVERFLOW;
 }
 
-int noiseFilter(cmucam4_instance_t *cam, int threshold)
+int CMUCam4_noiseFilter(cmucam4_instance_t *cam, int threshold)
 {
     return (snprintf(cam->_cmdBuffer, CMUCAM4_CMD_BUFFER_SIZE,
     "NF %d\r", threshold) < CMUCAM4_CMD_BUFFER_SIZE)
@@ -1152,7 +1152,7 @@ int noiseFilter(cmucam4_instance_t *cam, int threshold)
 * File System Commands
 *******************************************************************************/
 
-int changeAttributes(cmucam4_instance_t *cam, const char * fileOrDirectoryPathName,
+int CMUCam4_changeAttributes(cmucam4_instance_t *cam, const char * fileOrDirectoryPathName,
                               const char * attributes)
 {
     if((fileOrDirectoryPathName == NULL) || (attributes == NULL))
@@ -1167,7 +1167,7 @@ int changeAttributes(cmucam4_instance_t *cam, const char * fileOrDirectoryPathNa
     : CMUCAM4_COMMAND_OVERFLOW;
 }
 
-int changeDirectory(cmucam4_instance_t *cam, const char * directoryPathAndName)
+int CMUCam4_changeDirectory(cmucam4_instance_t *cam, const char * directoryPathAndName)
 {
     if(directoryPathAndName == NULL)
     {
@@ -1181,7 +1181,7 @@ int changeDirectory(cmucam4_instance_t *cam, const char * directoryPathAndName)
     : CMUCAM4_COMMAND_OVERFLOW;
 }
 
-int diskInformation(cmucam4_instance_t *cam, CMUcam4_disk_information_t * pointer)
+int CMUCam4_diskInformation(cmucam4_instance_t *cam, CMUcam4_disk_information_t * pointer)
 {
     int errorValue; int resultValue;
 
@@ -1221,7 +1221,7 @@ int diskInformation(cmucam4_instance_t *cam, CMUcam4_disk_information_t * pointe
     return resultValue ? CMUCAM4_RETURN_SUCCESS : CMUCAM4_UNEXPECTED_RESPONCE;
 }
 
-int diskSpace(cmucam4_instance_t *cam, CMUcam4_disk_space_t * pointer)
+int CMUCam4_diskSpace(cmucam4_instance_t *cam, CMUcam4_disk_space_t * pointer)
 {
     int errorValue; int resultValue;
 
@@ -1251,12 +1251,12 @@ int diskSpace(cmucam4_instance_t *cam, CMUcam4_disk_space_t * pointer)
     return resultValue ? CMUCAM4_RETURN_SUCCESS : CMUCAM4_UNEXPECTED_RESPONCE;
 }
 
-int formatDisk(cmucam4_instance_t *cam)
+int CMUCam4_formatDisk(cmucam4_instance_t *cam)
 {
     return _voidCommandWrapper(cam, "FM\r", CMUCAM4_FS_TIMEOUT);
 }
 
-long listDirectory(cmucam4_instance_t *cam, CMUcam4_directory_entry_t * pointer,
+long CMUCam4_listDirectory(cmucam4_instance_t *cam, CMUcam4_directory_entry_t * pointer,
                             size_t size, unsigned long offset)
 {
     int errorValue; unsigned long directorySize;
@@ -1316,7 +1316,7 @@ long listDirectory(cmucam4_instance_t *cam, CMUcam4_directory_entry_t * pointer,
     return (long) directorySize; // Will be between 0 and 65,536 entries.
 }
 
-int makeDirectory(cmucam4_instance_t *cam, const char * directoryPathAndName)
+int CMUCam4_makeDirectory(cmucam4_instance_t *cam, const char * directoryPathAndName)
 {
     if(directoryPathAndName == NULL)
     {
@@ -1330,7 +1330,7 @@ int makeDirectory(cmucam4_instance_t *cam, const char * directoryPathAndName)
     : CMUCAM4_COMMAND_OVERFLOW;
 }
 
-int moveEntry(cmucam4_instance_t *cam, const char * oldEntryPathAndName,
+int CMUCam4_moveEntry(cmucam4_instance_t *cam, const char * oldEntryPathAndName,
                        const char * newEntryPathAndName)
 {
     if((oldEntryPathAndName == NULL) || (newEntryPathAndName == NULL))
@@ -1345,7 +1345,7 @@ int moveEntry(cmucam4_instance_t *cam, const char * oldEntryPathAndName,
     : CMUCAM4_COMMAND_OVERFLOW;
 }
 
-int printLine(cmucam4_instance_t *cam, const char * filePathAndName, const char * textToAppend)
+int CMUCam4_printLine(cmucam4_instance_t *cam, const char * filePathAndName, const char * textToAppend)
 {
     if((filePathAndName == NULL) || (textToAppend == NULL))
     {
@@ -1359,7 +1359,7 @@ int printLine(cmucam4_instance_t *cam, const char * filePathAndName, const char 
     : CMUCAM4_COMMAND_OVERFLOW;
 }
 
-long filePrint(cmucam4_instance_t *cam, const char * filePathAndName, uint8_t * buffer,
+long CMUCam4_filePrint(cmucam4_instance_t *cam, const char * filePathAndName, uint8_t * buffer,
                         size_t size, unsigned long offset)
 {
     int errorValue; unsigned long fileSize;
@@ -1398,7 +1398,7 @@ long filePrint(cmucam4_instance_t *cam, const char * filePathAndName, uint8_t * 
     return (long) fileSize; // Will be between 0 and 2,147,483,647 bytes.
 }
 
-int removeEntry(cmucam4_instance_t *cam, const char * fileOrDirectoryPathAndName)
+int CMUCam4_removeEntry(cmucam4_instance_t *cam, const char * fileOrDirectoryPathAndName)
 {
     if(fileOrDirectoryPathAndName == NULL)
     {
@@ -1412,7 +1412,7 @@ int removeEntry(cmucam4_instance_t *cam, const char * fileOrDirectoryPathAndName
     : CMUCAM4_COMMAND_OVERFLOW;
 }
 
-int unmountDisk(cmucam4_instance_t *cam)
+int CMUCam4_unmountDisk(cmucam4_instance_t *cam)
 {
     return _voidCommandWrapper(cam, "UM\r", CMUCAM4_FS_TIMEOUT);
 }
@@ -1421,12 +1421,12 @@ int unmountDisk(cmucam4_instance_t *cam)
 * Image Capture Commands
 *******************************************************************************/
 
-int dumpBitmap(cmucam4_instance_t *cam)
+int CMUCam4_dumpBitmap(cmucam4_instance_t *cam)
 {
     return _voidCommandWrapper(cam, "DB\r", CMUCAM4_FS_TIMEOUT);
 }
 
-int dumpFrame(cmucam4_instance_t *cam, int horizontalResolution, int verticalResolution)
+int CMUCam4_dumpFrame(cmucam4_instance_t *cam, int horizontalResolution, int verticalResolution)
 {
     return (snprintf(cam->_cmdBuffer, CMUCAM4_CMD_BUFFER_SIZE,
     "DF %d %d\r", horizontalResolution, verticalResolution)
@@ -1435,7 +1435,7 @@ int dumpFrame(cmucam4_instance_t *cam, int horizontalResolution, int verticalRes
     : CMUCAM4_COMMAND_OVERFLOW;
 }
 
-int sendBitmap(cmucam4_instance_t *cam, CMUcam4_image_data_t * pointer)
+int CMUCam4_sendBitmap(cmucam4_instance_t *cam, CMUcam4_image_data_t * pointer)
 {
     int errorValue;
 
@@ -1465,7 +1465,7 @@ int sendBitmap(cmucam4_instance_t *cam, CMUcam4_image_data_t * pointer)
     return CMUCAM4_RETURN_SUCCESS;
 }
 
-int sendFrame(cmucam4_instance_t *cam, int horizontalResolution, int verticalResolution,
+int CMUCam4_sendFrame(cmucam4_instance_t *cam, int horizontalResolution, int verticalResolution,
                        uint16_t * buffer,
                        size_t horizonalSize, size_t horizontalOffset,
                        size_t verticalSize, size_t verticalOffset)
@@ -1601,7 +1601,7 @@ int _commandWrapper(cmucam4_instance_t *cam, const char * command, unsigned long
 {
     int errorValue;
 
-    if((errorValue = idleCamera()))
+    if((errorValue = CMUCam4_idleCamera(cam)))
     {
         return errorValue;
     }
@@ -1612,7 +1612,7 @@ int _commandWrapper(cmucam4_instance_t *cam, const char * command, unsigned long
     }
 
     _setReadTimeout(cam, timeout);
-    CMUCom4_write_string(&cam->_com, command);
+    CMUcom4_write_str(&cam->_com, command);
     _waitForResponce(cam);
 
     return CMUCAM4_RETURN_SUCCESS;
@@ -1952,19 +1952,19 @@ void _readText(cmucam4_instance_t *cam)
 void _setReadTimeout(cmucam4_instance_t *cam, unsigned long timeout)
 {
     cam->_timeout = timeout;
-    cam->_milliseconds = CMUCom4_milliseconds(&cam->_com);
+    cam->_milliseconds = CMUcom4_milliseconds(&cam->_com);
 }
 
-int _readWithTimeout(cmucam4_instance_t *cam)
+int _readWithTimeout(cmucam4_instance_t *cam) //pass in parameter saying how much data to expect, set rx_handler with trigger level
 {
     do
     {
-        if((CMUCom4_milliseconds(&cam->_com) - cam->_milliseconds) >= cam->_timeout)
+        if((CMUcom4_milliseconds(&cam->_com) - cam->_milliseconds) >= cam->_timeout)
         {
             longjmp(cam->_env, CMUCAM4_SERIAL_TIMEOUT);
         }
     }
-    while(CMUCom4_available(&cam->_com) == 0);
+    while(CMUcom4_available(&cam->_com) == 0);
 
-    return CMUCom4_read(&cam->_com);
+    return CMUcom4_read(&cam->_com);
 }

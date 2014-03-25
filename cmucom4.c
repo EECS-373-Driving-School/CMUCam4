@@ -7,7 +7,7 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include "cmucom4.h"
+#include "CMUcom4.h"
 #include "drivers/mss_uart/mss_uart.h"
 
 cmucom4_instance_t cmucom4_1;
@@ -59,6 +59,7 @@ size_t CMUcom4_write_byte ( cmucom4_instance_t *cmucom4, uint8_t data )
 
 int CMUcom4_available ( cmucom4_instance_t *cmucom4 )
 {
+	//loop, while the data read in is valid, keep reading
 	return -1;
 }
 

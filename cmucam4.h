@@ -20,7 +20,7 @@
 #ifndef _CMUCAM4_H_
 #define _CMUCAM4_H_
 
-#include "cmucom4.h"
+#include "CMUcom4.h"
 #include "drivers/mss_uart/mss_uart.h"
 
 #include <setjmp.h>
@@ -1638,7 +1638,7 @@ int CMUCam4_resetTrackingParameters(cmucam4_instance_t *cam);
 * @param [in] blueMax The maximum blue threshold - between 0 to 255.
 * @return 0 on success and a negative error value on failure.
 *******************************************************************************/
-int CMUCam4_setTrackingParameters(cmucam4_instance_t *cam, 
+int CMUCam4_setTrackingParameters(cmucam4_instance_t *cam,
 								  int redMin, int redMax,
                                   int greenMin, int greenMax,
                                   int blueMin, int blueMax);
