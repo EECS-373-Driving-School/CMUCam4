@@ -12,7 +12,7 @@
 #include <inttypes.h>
 #include "drivers/mss_uart/mss_uart.h"
 
-#define CMUCOM_RX_BUFFER_SIZE 1
+#define CMUCOM_RX_BUFFER_SIZE 1 //TODO
 #define CMUCOM4_INPUT_BUFFER_SIZE CMUCOM_RX_BUFFER_SIZE
 
 // TODO: figure out correct buffer size

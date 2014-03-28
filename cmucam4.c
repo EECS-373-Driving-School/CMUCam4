@@ -2,7 +2,7 @@
 #include "CMUcom4.h"
 #include "drivers/mss_uart/mss_uart.h"
 
-cmucam4_instance_t cmucam4;
+//cmucam4_instance_t cmucam4;
 
 void CMUCam4_init ( cmucam4_instance_t *cmucam4, mss_uart_instance_t* uart )
 {
@@ -1957,14 +1957,19 @@ void _setReadTimeout(cmucam4_instance_t *cam, unsigned long timeout)
 
 int _readWithTimeout(cmucam4_instance_t *cam) //pass in parameter saying how much data to expect, set rx_handler with trigger level
 {
+	uint32_t rx_size = 0;
     do
     {
-        if((CMUcom4_milliseconds(&cam->_com) - cam->_milliseconds) >= cam->_timeout)
-        {
-            longjmp(cam->_env, CMUCAM4_SERIAL_TIMEOUT);
-        }
+        //if((CMUcom4_milliseconds(&cam->_com) - cam->_milliseconds) >= cam->_timeout) {
+    	//	longjmp(cam->_env, CMUCAM4_SERIAL_TIMEOUT);
+    	//}
+    	rx_size = MSS_UART_get_rx (
+        		cam->_com.uart, // UART Instance
+        		cam->_com.buffer, // Pointer to receive data buffer
+        		sizeof(cam->_com.buffer) // Size of the data receive buffer
+            );
     }
-    while(CMUcom4_available(&cam->_com) == 0);
+    while( rx_size == 0);
 
-    return CMUcom4_read(&cam->_com);
+    return *cam->_com.buffer;
 }

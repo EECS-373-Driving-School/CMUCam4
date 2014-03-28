@@ -10,7 +10,7 @@
 #include "CMUcom4.h"
 #include "drivers/mss_uart/mss_uart.h"
 
-cmucom4_instance_t cmucom4_1;
+//cmucom4_instance_t cmucom4_1;
 
 void CMUcom4_init ( cmucom4_instance_t *cmucom4, mss_uart_instance_t* uart )
 {
@@ -55,6 +55,7 @@ size_t CMUcom4_write_str ( cmucom4_instance_t *cmucom4, const char *data )
 size_t CMUcom4_write_byte ( cmucom4_instance_t *cmucom4, uint8_t data )
 {
 	CMUcom4_write(cmucom4, &data, sizeof(data));
+	return sizeof(data);
 }
 
 int CMUcom4_available ( cmucom4_instance_t *cmucom4 )

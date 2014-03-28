@@ -1082,7 +1082,6 @@ CMUcam4_directory_entry_t;
 struct CMUcam4
 {
 	uint8_t *buffer;
-	mss_uart_instance_t* uart;
 
 	/***************************************************************************//**
 	* Millisecond timeout storage for use with CMUcam4::_readWithTimeout().
