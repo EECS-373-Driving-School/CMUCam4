@@ -1,6 +1,7 @@
 #include "cmucam4.h"
 #include "drivers/mss_uart/mss_uart.h"
 #include <string.h>
+
 cmucam4_instance_t cmucam4;
 
 static const uint8_t CMUCAM4_ACK[] = {'A', 'C', 'K', '\r'};
@@ -92,7 +93,7 @@ int CMUCam4_wait_for_ack ( cmucam4_instance_t *cam )
 		ptr += rx_len;
 
 		// Check data length
-		if (ptr - cam->data_buffer < 4)
+		if (ptr - cam->data_buffer < sizeof(CMUCAM4_ACK))
 			continue;
 
 		// Response is ACK
