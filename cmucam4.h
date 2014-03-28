@@ -13,6 +13,7 @@ typedef struct {
 	uint8_t cmd_buffer[CMUCAM4_CMD_BUFFER_SIZE];
 	uint8_t input_buffer[CMUCAM4_INPUT_BUFFER_SIZE];
 	uint8_t data_buffer[CMUCAM4_DATA_BUFFER_SIZE];
+	size_t data_size;
 } cmucam4_instance_t;
 
 extern cmucam4_instance_t cmucam4;
@@ -66,11 +67,12 @@ int CMUCam4_wait_for_ack ( cmucam4_instance_t *cam );
  * Reads data from UART into CMUCam4 input buffer.
  *
  * @param[in] cam Pointer for CMUCam4 object
- * @param[in] len Input buffer length
+ * @param[in] dest Destination
+ * @param[in] size Input buffer length
  *
  * @returns Number of bytes read
  */
-size_t CMUCam4_read ( cmucam4_instance_t *cam );
+size_t CMUCam4_copy_data ( cmucam4_instance_t *cam, uint8_t *dest, size_t dest_size );
 
 void CMUCam4_read_H ( cmucam4_instance_t *cam, char *str, size_t len );
 

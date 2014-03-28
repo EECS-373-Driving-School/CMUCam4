@@ -1,6 +1,11 @@
 #include "cmucam4.h"
 #include "drivers/mss_uart/mss_uart.h"
 #include <string.h>
+#include <math.h>
+#include <assert.h>
+
+#define MAX(X,Y) ((X) > (Y) ? (X) : (Y))
+#define MIN(X,Y) ((X) < (Y) ? (X) : (Y))
 
 cmucam4_instance_t cmucam4;
 
@@ -23,15 +28,17 @@ void CMUCam4_init ( cmucam4_instance_t *cam, mss_uart_instance_t *uart)
 		MSS_UART_DATA_8_BITS | MSS_UART_NO_PARITY | MSS_UART_ONE_STOP_BIT
 	);
 
-	// Set baud to high-speed
-	CMUCam4_cmd_no_ack (cam, "BM", "250000");
-
-	// Re-initialize UART at high speed mode (250000 baud)
-	MSS_UART_init (
-		cam->uart,
-		250000,
-		MSS_UART_DATA_8_BITS | MSS_UART_NO_PARITY | MSS_UART_ONE_STOP_BIT
-	);
+//	// Set baud to high-speed
+//	CMUCam4_cmd(cam, "BM", "250000");
+//
+//	// Re-initialize UART at high speed mode (250000 baud)
+//	MSS_UART_init (
+//		cam->uart,
+//		250000,
+//		MSS_UART_DATA_8_BITS | MSS_UART_NO_PARITY | MSS_UART_ONE_STOP_BIT
+//	);
+//
+//	int foo = CMUCam4_cmd(cam, "", "");
 
 	// Zero-out buffers
 	CMUCam4_flush_buffers(cam);
@@ -40,7 +47,8 @@ void CMUCam4_init ( cmucam4_instance_t *cam, mss_uart_instance_t *uart)
 void CMUCam4_flush_buffers ( cmucam4_instance_t *cam )
 {
 	// Clear the UART buffer
-	while (CMUCam4_read(cam) != 0);
+	//while ( != 0);
+	MSS_UART_get_rx(cam->uart, cam->input_buffer, CMUCAM4_INPUT_BUFFER_SIZE);
 
 	// Zero the buffers
 	memset(cam->cmd_buffer, 0, CMUCAM4_CMD_BUFFER_SIZE);
@@ -51,7 +59,7 @@ void CMUCam4_flush_buffers ( cmucam4_instance_t *cam )
 int CMUCam4_cmd_no_ack ( cmucam4_instance_t *cam, const char *cmd, const char *args )
 {
 	// Make sure cmd + args is < CMUCAM4_CMD_BUFFER_SIZE
-	if (strlen(cmd) + strlen(args) < CMUCAM4_CMD_BUFFER_SIZE - 3)
+	if (strlen(cmd) + strlen(args) > CMUCAM4_CMD_BUFFER_SIZE - 3)
 		return CMUCAM4_TX_CMD_TOO_LONG;
 
 	// Format command string
@@ -86,14 +94,14 @@ int CMUCam4_wait_for_ack ( cmucam4_instance_t *cam )
 		size_t rx_len;
 
 		// Read data into buffer
-		rx_len = CMUCam4_read(cam);
+		rx_len = MSS_UART_get_rx(cam->uart, cam->input_buffer, CMUCAM4_INPUT_BUFFER_SIZE);
 
 		// Concatenate input buffer with
-		memcpy(cam->data_buffer, cam->input_buffer, rx_len);
+		memcpy(ptr, cam->input_buffer, rx_len);
 		ptr += rx_len;
 
 		// Check data length
-		if (ptr - cam->data_buffer < sizeof(CMUCAM4_ACK))
+		if (ptr - cam->data_buffer < 4)
 			continue;
 
 		// Response is ACK
@@ -111,7 +119,7 @@ int CMUCam4_wait_for_ack ( cmucam4_instance_t *cam )
 		// No match
 		else {
 			// Discard first character and data by one
-			memcpy(cam->data_buffer, cam->data_buffer + 1, ptr - cam->data_buffer - 1);
+			memcpy(cam->data_buffer, cam->data_buffer + 1, ptr - cam->data_buffer);
 			ptr -= 1;
 			continue;
 		}
@@ -120,12 +128,45 @@ int CMUCam4_wait_for_ack ( cmucam4_instance_t *cam )
 	}
 
 	// Remove first four characters from data buffer
-	memcpy(cam->data_buffer, cam->data_buffer + 4, ptr - cam->data_buffer - 4);
+	memcpy(cam->data_buffer, cam->data_buffer + 4, MAX(ptr - cam->data_buffer - 4, 5));
+
+	cam->data_size = ptr - cam->data_buffer;
 
 	return retval;
 }
 
-size_t CMUCam4_read ( cmucam4_instance_t *cam )
+size_t CMUCam4_copy_data ( cmucam4_instance_t *cam, uint8_t *dest, size_t dest_size )
 {
-	return MSS_UART_get_rx(cam->uart, cam->input_buffer, CMUCAM4_INPUT_BUFFER_SIZE);
+	uint8_t *ptr;
+	size_t size;
+
+	ptr = cam->data_buffer;
+
+	while (1)
+	{
+		if (*ptr == ':')
+			break;
+
+		ptr++;
+
+		if (ptr >= cam->data_buffer + cam->data_size) {
+			size_t rx_len;
+
+			// Read data into buffer
+			rx_len = MSS_UART_get_rx(cam->uart, cam->input_buffer, CMUCAM4_INPUT_BUFFER_SIZE);
+
+			// Check for buffer overrun
+			if (ptr - cam->data_buffer + rx_len >= CMUCAM4_INPUT_BUFFER_SIZE)
+				return 0;
+
+			// Concatenate input buffer with
+			memcpy(ptr, cam->input_buffer, rx_len);
+		}
+	}
+	size = ptr - cam->data_buffer;
+
+	// TODO: check against dest_size
+	memcpy(dest, cam->data_buffer, MIN(size, dest_size));
+
+	return size;
 }
