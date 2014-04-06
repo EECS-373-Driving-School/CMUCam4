@@ -8,9 +8,10 @@
 #define CMUCAM4_DATA_BUFFER_SIZE 256
 #define CMUCAM4_INPUT_BUFFER_SIZE 256
 
-#define MSS_UART_19200_BAUD     324
-#define MSS_UART_DATA_8_BITS     0x01u
-#define MSS_UART_NO_PARITY           0x00u
+#define UART_9600_BAUD     650
+#define UART_19200_BAUD     324
+#define UART_DATA_8_BITS     0x01u
+#define UART_NO_PARITY           0x00u
 
 
 typedef struct {

@@ -2,7 +2,10 @@
 #include "CMUcam4.h"
 #include "CMUcom4.h"
 #include "drivers/CoreUARTapb/core_uart_apb.h"
+#include "drivers/mss_uart/mss_uart.h"
 #include <string.h>
+#include <stdint.h>
+//#include "lcd.h"
 
 #define RED_MIN 21
 #define RED_MAX 33
@@ -17,38 +20,105 @@
 #define NOISE_FILTER_LEVEL 2 // Filter out runs of tracked pixels smaller than this in length 0 - 255.
 #define YUV_MODE false
 
+static const uint8_t RFID[] = "6F005";
+static const uint8_t RFID_1[] = "6F005C7D1957";
+static const uint8_t RFID_2[] = "6F005CBEB13C";
+static const uint8_t RFID_3[] = "6F005C606E3D";
+static const uint8_t RFID_4[] = "6F005CBD038D";
+static const uint8_t RFID_5[] = "6F005CC0C635";
+
+cmucam4_instance_t cam;
+
+void uart1_rx_handler( void )
+{
+	uint8_t rx_buff[16] = {'\0'};
+	uint8_t input_buff[30] = {'\0'};
+
+	uint8_t *ptr = input_buff;
+	// Check data length
+	uint32_t rx_size = 0;
+
+	int found = 0;
+	while (!found) {
+		rx_size = MSS_UART_get_rx( &g_mss_uart1, rx_buff, sizeof(rx_buff) );
+
+		// Concatenate input buffer with
+		if(rx_size > 0) {
+			memcpy(ptr, rx_buff, rx_size);
+			for(int i=0; i<rx_size; i++) {
+				if(*ptr == '\r')
+					found = 1;
+				ptr++;
+			}
+		}
+	}
+
+	while (memcmp(input_buff, RFID, sizeof(RFID)-1) != 0) {
+		memcpy(input_buff, input_buff+1, ptr-input_buff);
+		ptr -= 1;
+	}
+
+	if (memcmp(input_buff, RFID_1, sizeof(RFID_1)-1) == 0) {
+
+		while( 1 )
+		{
+			CMUCam4_cmd(&cam, "TC");
+			CMUCam4_copy_T_data( &cam );
+			CMUCam4_cmd_no_ack(&cam, ""); //need this to exit from TC
+
+			if(cam.pixels > PIXELS_THRESHOLD && cam.confidence > CONFIDENCE_THRESHOLD) // We see the color to track.
+			{
+				CMUCam4_cmd(&cam, "L1 10");
+				return;
+			}
+			else {
+				CMUCam4_cmd(&cam, "L0");
+			}
+		}
+	} else {
+		CMUCam4_cmd(&cam, "L0");
+
+	}
+	return;
+}
+
 int main()
 {
-	cmucam4_instance_t cam;
-	char str[50] = {'\0'};
 
-	UART_instance_t mss_uart;
-	CMUCam4_init(&cam, &mss_uart);
+	UART_instance_t cmucam_uart;
+	UART_init (
+			&cmucam_uart,
+			(addr_t)0x40050000,
+			UART_19200_BAUD,
+			UART_DATA_8_BITS | UART_NO_PARITY);
 
+	CMUCam4_init(&cam, &cmucam_uart);
 	char sendCmd[50] = {'\0'};
 	sprintf(sendCmd, "ST %d %d %d %d %d %d", RED_MIN, RED_MAX, GREEN_MIN,
 			GREEN_MAX, BLUE_MIN, BLUE_MAX);
 	CMUCam4_cmd(&cam, sendCmd);
 
-	while( 1 )
-	{
-		CMUCam4_cmd(&cam, "TC");
 
-		CMUCam4_copy_T_data( &cam );
+	MSS_UART_init (
+		&g_mss_uart1,
+		MSS_UART_9600_BAUD,
+		MSS_UART_DATA_8_BITS | MSS_UART_NO_PARITY
+	);
 
-		printf("\r\nstring %d %d %d %d %d %d %d %d\r\n", cam.mx, cam.my, cam.x1, cam.y1,
-				cam.x2, cam.y2, cam.pixels, cam.confidence);
+	MSS_UART_set_rx_handler(
+		&g_mss_uart1, //UART Instance being addressed
+		uart1_rx_handler, // Pointer to the user defined receive handler function
+		MSS_UART_FIFO_SINGLE_BYTE);
 
-		CMUCam4_cmd_no_ack(&cam, ""); //need this to exit from TC
+	while(1);
+	/*UART_instance_t xbee_uart;
+	UART_init (
+			&rfid_uart,
+			(addr_t)0x40050200,
+			MSS_UART_9600_BAUD,
+			MSS_UART_DATA_8_BITS | MSS_UART_NO_PARITY
+		);*/
 
-		if(cam.pixels > PIXELS_THRESHOLD && cam.confidence > CONFIDENCE_THRESHOLD) // We see the color to track.
-		{
-			CMUCam4_cmd(&cam, "L1 10");
-		}
-		else {
-			CMUCam4_cmd(&cam, "L0");
 
-		}
-	}
 	return 1;
 }

@@ -19,12 +19,6 @@ void CMUCam4_init ( cmucam4_instance_t *cam, UART_instance_t *uart)
 	cam->uart = uart;
 
 	// Initialize UART at low speed mode (19200 baud)
-	UART_init (
-		cam->uart,
-		(addr_t)0x40050100,
-		MSS_UART_19200_BAUD,
-		MSS_UART_DATA_8_BITS | MSS_UART_NO_PARITY
-	);
 
 
 //	// Set baud to high-speed
