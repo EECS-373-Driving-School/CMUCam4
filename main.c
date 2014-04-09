@@ -28,9 +28,18 @@ static const uint8_t RFID_4[] = "6F005CBD038D";
 static const uint8_t RFID_5[] = "6F005CC0C635";
 
 cmucam4_instance_t cam;
-UART_instance_t xbee_uart;
+UART_instance_t rfid_uart;
 
-void uart1_rx_handler( void )
+void xbee_rx_handler( void ) {
+	//process input data- should be 16bits
+	uint8_t rx_buff[16] = {'\0'};
+	uint32_t rx_size = 0;
+	rx_size = MSS_UART_get_rx( &g_mss_uart1, rx_buff, sizeof(rx_buff) );
+
+}
+
+uint32_t count;
+__attribute__ ((interrupt)) void Fabric_IRQHandler( void )
 {
 	uint8_t rx_buff[16] = {'\0'};
 	uint8_t input_buff[30] = {'\0'};
@@ -39,9 +48,11 @@ void uart1_rx_handler( void )
 	// Check data length
 	uint32_t rx_size = 0;
 
+    NVIC_ClearPendingIRQ( Fabric_IRQn );
+
 	int found = 0;
 	while (!found) {
-		rx_size = MSS_UART_get_rx( &g_mss_uart1, rx_buff, sizeof(rx_buff) );
+		rx_size = UART_get_rx( &rfid_uart, rx_buff, sizeof(rx_buff) );
 
 		// Concatenate input buffer with
 		if(rx_size > 0) {
@@ -71,8 +82,8 @@ void uart1_rx_handler( void )
 			{
 				CMUCam4_cmd(&cam, "L1 10");
 
-				uint8_t rfid_buffer[] = "Police!";
-				UART_fill_tx_fifo (&xbee_uart, rfid_buffer, sizeof(rfid_buffer)-1);
+				uint8_t xbee_buffer[10] = "Police!";
+				MSS_UART_polled_tx_string (&g_mss_uart1, xbee_buffer);
 
 				return;
 			}
@@ -87,8 +98,13 @@ void uart1_rx_handler( void )
 	return;
 }
 
+
+
 int main()
 {
+	//RFID interrupt
+	NVIC_EnableIRQ(Fabric_IRQn);
+
 	//Initialize CMUcam
 	UART_instance_t cmucam_uart;
 	UART_init (
@@ -103,7 +119,7 @@ int main()
 			GREEN_MAX, BLUE_MIN, BLUE_MAX);
 	CMUCam4_cmd(&cam, sendCmd);
 
-	//Initialize RFID
+	//Initialize XBee
 	MSS_UART_init (
 		&g_mss_uart1,
 		MSS_UART_9600_BAUD,
@@ -112,16 +128,18 @@ int main()
 
 	MSS_UART_set_rx_handler(
 		&g_mss_uart1, //UART Instance being addressed
-		uart1_rx_handler, // Pointer to the user defined receive handler function
+		xbee_rx_handler, // Pointer to the user defined receive handler function
 		MSS_UART_FIFO_SINGLE_BYTE);
 
-	//Initialize XBee
+	//Initialize RFID
 	UART_init (
-		&xbee_uart,
+		&rfid_uart,
 		(addr_t)0x40050100,
 		UART_9600_BAUD,
 		DATA_8_BITS | NO_PARITY
 	);
+
+	NVIC_EnableIRQ(Fabric_IRQn);
 
 	while(1);
 
