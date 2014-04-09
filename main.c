@@ -28,6 +28,7 @@ static const uint8_t RFID_4[] = "6F005CBD038D";
 static const uint8_t RFID_5[] = "6F005CC0C635";
 
 cmucam4_instance_t cam;
+UART_instance_t xbee_uart;
 
 void uart1_rx_handler( void )
 {
@@ -69,6 +70,10 @@ void uart1_rx_handler( void )
 			if(cam.pixels > PIXELS_THRESHOLD && cam.confidence > CONFIDENCE_THRESHOLD) // We see the color to track.
 			{
 				CMUCam4_cmd(&cam, "L1 10");
+
+				uint8_t rfid_buffer[] = "Police!";
+				UART_fill_tx_fifo (&xbee_uart, rfid_buffer, sizeof(rfid_buffer)-1);
+
 				return;
 			}
 			else {
@@ -84,13 +89,13 @@ void uart1_rx_handler( void )
 
 int main()
 {
-
+	//Initialize CMUcam
 	UART_instance_t cmucam_uart;
 	UART_init (
 			&cmucam_uart,
 			(addr_t)0x40050000,
 			UART_19200_BAUD,
-			UART_DATA_8_BITS | UART_NO_PARITY);
+			DATA_8_BITS | NO_PARITY);
 
 	CMUCam4_init(&cam, &cmucam_uart);
 	char sendCmd[50] = {'\0'};
@@ -98,7 +103,7 @@ int main()
 			GREEN_MAX, BLUE_MIN, BLUE_MAX);
 	CMUCam4_cmd(&cam, sendCmd);
 
-
+	//Initialize RFID
 	MSS_UART_init (
 		&g_mss_uart1,
 		MSS_UART_9600_BAUD,
@@ -110,14 +115,15 @@ int main()
 		uart1_rx_handler, // Pointer to the user defined receive handler function
 		MSS_UART_FIFO_SINGLE_BYTE);
 
-	while(1);
-	/*UART_instance_t xbee_uart;
+	//Initialize XBee
 	UART_init (
-			&rfid_uart,
-			(addr_t)0x40050200,
-			MSS_UART_9600_BAUD,
-			MSS_UART_DATA_8_BITS | MSS_UART_NO_PARITY
-		);*/
+		&xbee_uart,
+		(addr_t)0x40050100,
+		UART_9600_BAUD,
+		DATA_8_BITS | NO_PARITY
+	);
+
+	while(1);
 
 
 	return 1;
